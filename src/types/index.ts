@@ -1,4 +1,4 @@
-export type ActiveTab = 'compress-pdf' | 'merge-pdf' | 'compress-image';
+export type ActiveTab = 'compress-pdf' | 'merge-pdf' | 'compress-image' | 'restore-image';
 
 export type PdfPreset = 'extreme' | 'balanced' | 'light' | 'custom';
 
@@ -65,4 +65,3 @@ export interface ImageProcessItem {
   reductionPercentage?: number;
   error?: string;
 }
-

@@ -5,6 +5,7 @@ import { TabNavigation } from './components/TabNavigation';
 import { PdfCompressor } from './components/PdfCompressor/PdfCompressor';
 import { PdfMerger } from './components/PdfMerger/PdfMerger';
 import { ImageCompressor } from './components/ImageCompressor/ImageCompressor';
+import { PhotoRestoration } from './components/PhotoRestoration/PhotoRestoration';
 import { ActiveTab } from './types';
 import { Sparkles } from 'lucide-react';
 
@@ -35,7 +36,7 @@ export const App: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-8 space-y-2 sm:space-y-3">
+        <div className="text-center max-w-3xl mx-auto mb-4 sm:mb-8 space-y-2 sm:space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[11px] sm:text-xs font-semibold">
             <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>Pemrosesan Berkas 100% Lokal di Browser</span>
@@ -73,6 +74,17 @@ export const App: React.FC = () => {
               </p>
             </>
           )}
+
+          {activeTab === 'restore-image' && (
+            <>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                Restorasi & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-300 to-sky-400">Tingkatkan Foto</span>
+              </h2>
+              <p className="text-xs sm:text-base text-slate-400 max-w-xl mx-auto leading-relaxed px-2">
+                Perbaiki ketajaman foto buram (de-blur), hilangkan bintik noise, pulihkan foto pudar, dan perbesar resolusi (upscaler 2x/4x) secara lokal.
+              </p>
+            </>
+          )}
         </div>
 
         {/* Tab Navigation */}
@@ -97,6 +109,10 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === 'compress-image' && <ImageCompressor />}
+
+          {activeTab === 'restore-image' && (
+            <PhotoRestoration onTransferToCompressor={handleTransferToCompressor} />
+          )}
         </div>
       </main>
 

@@ -50,15 +50,26 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, dan **
 
 ## 🚀 Cara Menjalankan Proyek
 
-### Kebutuhan Sistem:
-* Node.js v18+ (Tersedia Node v24 pada sistem)
-* Web Browser modern (Chrome, Edge, Firefox, Safari, Brave)
+### Cara Paling Praktis (Khusus Pengguna Windows):
+Cukup **klik ganda (double-click)** pada berkas:
+👉 **`jalankan.bat`** (atau **`start.bat`**)
 
-### 1. Menjalankan Server Pengembangan (Dev Mode):
+Skrip ini akan secara otomatis:
+1. Memeriksa keberadaan Node.js di komputer.
+2. Memasang dependensi (`npm install`) secara otomatis jika belum ada.
+3. Menjalankan server aplikasi lokal dengan mode `--host` (dapat diakses juga dari perangkat lain/HP dalam satu jaringan Wi-Fi).
+4. Membuka peramban secara otomatis ke alamat `http://localhost:5173/`.
+
+---
+
+### Cara Manual via Terminal / Command Prompt:
 ```bash
+# 1. Pasang dependensi jika baru mengunduh proyek
+cmd /c npm install
+
+# 2. Jalankan mode pengembangan
 cmd /c npm run dev
 ```
-Buka browser pada alamat yang tertera (biasanya `http://localhost:5173/`).
 
 ### 2. Membangun Proyek untuk Produksi (Build):
 ```bash

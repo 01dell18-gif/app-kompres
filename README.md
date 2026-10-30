@@ -52,6 +52,13 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 
 ---
 
+### 5. 🌓 Fitur Tema Terang & Gelap (Light / Dark Mode) & Mode Ponsel
+* **Pilihan Tema Fleksibel**: Tombol toggle instan (Matahari / Bulan) di bilah navigasi atas untuk berpindah antara tampilan tema Gelap (*Dark Mode*) dan Terang (*Light Mode*).
+* **Penyimpanan Preferensi Lokal**: Pilihan tema pengguna disimpan di `localStorage` peramban sehingga otomatis aktif saat aplikasi dibuka kembali.
+* **100% Responsif & Mobile-Friendly**: Antarmuka dioptimalkan secara mendalam untuk perangkat Android, iOS, tablet, maupun layar desktop, dengan tombol sentuh berukuran proporsional, grid adaptif 2x2, dan geseran sentuh (*touch gestures*).
+
+---
+
 ## 🔒 Privasi & Keamanan Data (Zero Egress)
 * **Nol Upload Peladen (0 KB)**: Dokumen sensitif seperti KTP, Kartu Keluarga, SKCK, Transkrip Nilai, dan Ijazah **tidak pernah meninggalkan perangkat Anda**.
 * **Manajemen Memori Bersih**: Objek URL Blob dibersihkan secara sistematis melalui `URL.revokeObjectURL()` guna mencegah kebocoran RAM.

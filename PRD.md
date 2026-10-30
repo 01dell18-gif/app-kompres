@@ -1,4 +1,4 @@
-Dokumen Kebutuhan Produk (PRD): Sistem Aplikasi Web Terpadu Kompresi Dokumen, Penggabungan PDF, dan Kompresi Citra Massal Berbasis Klien
+Dokumen Kebutuhan Produk (PRD): Sistem Aplikasi Web FJY Channel Kompres (Kompresi Dokumen, Penggabungan PDF, Kompresi Citra Massal, dan Restorasi Foto Berbasis Klien)
 Landasan Konseptual dan Arsitektur Rekayasa Perangkat Lunak
 Kebutuhan optimalisasi berkas digital berkembang pesat seiring dengan pengetatan regulasi ukuran berkas unggahan pada portal layanan publik, sistem rekrutmen pegawai, dan platform manajemen dokumen institusional1. Layanan manipulasi berkas generasi awal umumnya mengadopsi model pemrosesan terpusat pada peladen (server-side processing), di mana berkas pengguna diunggah secara penuh melintasi jaringan internet, dimanipulasi oleh utilitas sistem operasi peladen, lalu diunduh kembali oleh peramban pengguna4. Paradigma komputasi terpusat ini menghadirkan beban biaya transmisi data (bandwidth egress) yang eksponensial, kerentanan latensi jaringan, antrean antarmuka pada jam sibuk, serta risiko pelanggaran privasi data identitas sensitif seperti KTP, ijazah, dan dokumen finansial3.
 Mengacu pada kesederhanaan utilitas fungsional seperti yang ditampilkan pada layanan utilitas TepiLayar8, aplikasi web ini dirancang dengan pendekatan arsitektur eksekusi lokal pada peramban (client-side execution)4. Pendekatan ini mengeliminasi kebutuhan peladen perantara untuk pemrosesan konten dengan memanfaatkan teknologi WebAssembly (WASM) untuk kompresi PDF, pustaka manipulasi biner JavaScript murni (pdf-lib) untuk penggabungan dokumen PDF, serta kombinasi OffscreenCanvas dan pustaka pengodean citra modern untuk kompresi foto massal10.
@@ -252,3 +252,17 @@ Validasi ukuran berkas luaran terhadap ambang 200/500 KB20
 Kepatuhan Privasi Data
 0 permintaan jaringan keluar (zero egress)5
 Audit otomatis pada DevTools Network log saat berkas diproses5
+
+Spesifikasi Rekayasa Fungsional Modul Restorasi Citra & AI Upscaler
+Modul Restorasi Foto melengkapi alur kerja dokumen dan citra dengan kapabilitas pemulihan kualitas visual berbasis komputasi Canvas Digital Signal Processing (DSP) 100% lokal di sisi klien:
+1. Image Enhancement (Peningkatan Gambar): Peningkatan ketajaman, penyesuaian kontras dinamis, saturasi warna, dan eksposur pencahayaan secara cerdas dan terkalibrasi.
+2. AI Image Upscaler / Super Resolution: Pembesaran dimensi 2x dan 4x dengan interpolasi tingkat tinggi dan sintesis frekuensi detail tepi untuk mencegah distorsi piksel saat pencetakan fisik atau penayangan resolusi tinggi.
+3. De-blur / Menjernihkan Foto Buram: Algoritma true separable unsharp masking dengan filtering Gaussian dan ambang batas (noise threshold) untuk menajamkan tepi tulisan pada dokumen/kartu identitas dan mengatasi motion blur tanpa memicu artefak halo kasar.
+4. Denoise / Pengurangan Noise: Filter bilateral adaptif yang mereduksi bintik kasar (sensor noise / high-ISO grain) pada latar belakang dengan tetap mempertahankan ketegasan garis tepi kontur objek utama.
+5. Photo Restoration (Pemulihan Foto Pudar): Dynamic range expansion histogram equalization dan auto-level curve untuk memulihkan foto cetak kuno/ijazah lama yang menguning dan pudar.
+6. Color Correction & Grading: Keseimbangan temperatur warna (warm/cool), vibrance kanal Rec. 709, dan kendali kontras berbasis Lookup Tables (LUT) 256-elemen berkecepatan tinggi.
+7. Antarmuka Komparasi Split-View: Peninjauan interaktif perbandingan sebelum/sesudah dengan kendali slider sentuh (touch-friendly) untuk perangkat seluler dan desktop.
+
+Spesifikasi Sistem Tema & Aksesibilitas Antarmuka
+1. Tema Terang & Gelap (Light / Dark Mode): Dukungan pergantian tema visual instan via pemilih tema (Sun/Moon toggle) di bilah navigasi atas, dengan persistensi preferensi di localStorage (fjy_theme).
+2. Responsivitas Seluler Penuh (Mobile-First Architecture): Grid adaptif, kontrol slider yang mendukung event sentuhan jari (onTouchStart, onTouchMove), dropzone sentuh kompak, serta tipografi proporsional untuk kemudahan pengoperasian di layar smartphone dan tablet.

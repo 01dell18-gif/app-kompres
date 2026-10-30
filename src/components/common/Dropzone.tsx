@@ -65,7 +65,6 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       onFilesSelected(filesArray);
-      // Reset input value so same file can be re-selected if needed
       e.target.value = '';
     }
   };
@@ -77,7 +76,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
-      className={`relative cursor-pointer transition-all duration-300 rounded-3xl p-8 sm:p-12 text-center border-2 border-dashed flex flex-col items-center justify-center ${
+      className={`relative cursor-pointer transition-all duration-300 rounded-3xl p-6 sm:p-10 text-center border-2 border-dashed flex flex-col items-center justify-center ${
         isDragOver
           ? 'border-sky-400 bg-sky-500/10 scale-[1.01] shadow-2xl shadow-sky-500/20'
           : 'border-white/15 bg-[#121218]/60 hover:bg-[#16161f]/80 hover:border-sky-500/40'
@@ -93,42 +92,41 @@ export const Dropzone: React.FC<DropzoneProps> = ({
       />
 
       {badge && (
-        <span className="absolute top-4 right-4 text-[11px] font-medium tracking-wide px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400">
+        <span className="absolute top-3 right-3 sm:top-4 sm:right-4 text-[10px] sm:text-[11px] font-medium tracking-wide px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400">
           {badge}
         </span>
       )}
 
       {/* Hero Icon */}
       <div
-        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mb-5 transition-transform duration-300 ${
+        className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-transform duration-300 ${
           isDragOver
             ? 'scale-110 bg-gradient-to-tr from-sky-500 to-cyan-400 text-white shadow-xl shadow-sky-500/30'
             : 'bg-white/[0.04] text-sky-400 border border-white/10 group-hover:scale-105'
         }`}
       >
-        <Icon className="w-8 h-8 sm:w-10 sm:h-10" />
+        <Icon className="w-7 h-7 sm:w-10 sm:h-10" />
       </div>
 
       {/* Typography */}
-      <h3 className="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">
+      <h3 className="text-base sm:text-xl font-bold text-white mb-1.5 sm:mb-2 tracking-tight px-2">
         {title}
       </h3>
-      <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
+      <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto mb-5 sm:mb-6 leading-relaxed px-2">
         {subtitle}
       </p>
 
-      {/* CTA Button styled */}
+      {/* CTA Button */}
       <button
         type="button"
-        className="px-6 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-lg shadow-sky-500/25 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-lg shadow-sky-500/25 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
       >
         Pilih Berkas Dari Perangkat
       </button>
 
-      <p className="mt-4 text-[11px] text-slate-500">
+      <p className="mt-3 sm:mt-4 text-[10px] sm:text-[11px] text-slate-500 hidden sm:block">
         Atau seret dan lepaskan berkas langsung ke area ini
       </p>
     </div>
   );
 };
-

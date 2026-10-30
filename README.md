@@ -1,6 +1,10 @@
-# BerkasLokal (App Kompres & Gabung PDF / Foto Lokal)
+# FJY Channel Kompres (Aplikasi Kompres PDF, Gabung PDF & Kompres Foto Lokal)
 
-Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, dan **Kompresi Citra Massal (Batch)** yang **100% berjalan langsung di peramban (client-side) tanpa mengunggah berkas apa pun ke server**.
+<p align="center">
+  <img src="public/logo.png" width="120" height="120" alt="FJY Channel Logo" style="border-radius: 50%;" />
+</p>
+
+Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, dan **Kompresi Citra Massal (Batch)** yang **100% berjalan langsung di peramban (client-side) tanpa mengunggah berkas apa pun ke server**. Dioptimalkan untuk penggunaan desktop maupun **perangkat seluler (mobile)**.
 
 ---
 

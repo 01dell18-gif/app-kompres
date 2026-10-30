@@ -82,14 +82,14 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
   };
 
   return (
-    <div className="glass-card rounded-2xl p-5 sm:p-6 mb-6">
-      <div className="flex items-center gap-2.5 pb-4 border-b border-white/10 mb-5">
-        <Settings2 className="w-5 h-5 text-sky-400" />
-        <h3 className="font-semibold text-slate-100 text-base">Pengaturan Kompresi Dokumen</h3>
+    <div className="glass-card rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+      <div className="flex items-center gap-2.5 pb-3 sm:pb-4 border-b border-white/10 mb-4 sm:mb-5">
+        <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400" />
+        <h3 className="font-semibold text-slate-100 text-sm sm:text-base">Pengaturan Kompresi Dokumen</h3>
       </div>
 
       {/* Preset Radio Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 sm:mb-6">
         {presets.map((p) => {
           const Icon = p.icon;
           const isSelected = options.preset === p.id;
@@ -97,10 +97,10 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
             <div
               key={p.id}
               onClick={() => !disabled && handlePresetSelect(p)}
-              className={`relative cursor-pointer rounded-xl p-4 border transition-all duration-200 flex flex-col justify-between ${
+              className={`relative cursor-pointer rounded-xl p-3.5 sm:p-4 border transition-all duration-200 flex flex-col justify-between active:scale-[0.99] ${
                 isSelected
                   ? 'bg-sky-500/10 border-sky-500/50 shadow-md shadow-sky-500/10'
-                  : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/15'
+                  : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.04]'
               } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
             >
               <div>
@@ -113,7 +113,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
                     <Icon className="w-4 h-4" />
                   </div>
                   <span
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                    className={`text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                       isSelected
                         ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
                         : 'bg-white/5 text-slate-400'
@@ -122,11 +122,11 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
                     {p.tag}
                   </span>
                 </div>
-                <h4 className="font-semibold text-sm text-slate-200 mb-1">{p.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{p.desc}</p>
+                <h4 className="font-semibold text-xs sm:text-sm text-slate-200 mb-1">{p.title}</h4>
+                <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed">{p.desc}</p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-white/5 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400">
                 <span>Skala: {p.scale}x</span>
                 <span>Kualitas: {Math.round(p.quality * 100)}%</span>
               </div>
@@ -136,12 +136,12 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
       </div>
 
       {/* Advanced Row: Target Size & Grayscale */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-white/5">
         {/* Target Size Selector */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <Target className="w-4 h-4 text-cyan-400" />
-            <span>Target Batas Ukuran Tertentu (Opsional)</span>
+          <label className="text-[11px] sm:text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400" />
+            <span>Target Batas Ukuran (Opsional)</span>
           </label>
           <select
             value={options.targetSizeKB === null ? '' : options.targetSizeKB}
@@ -150,7 +150,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
               handleTargetChange(val);
             }}
             disabled={disabled}
-            className="w-full bg-[#181822] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+            className="w-full bg-[#181822] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500 min-h-[40px]"
           >
             {targetSizeOptions.map((opt, i) => (
               <option key={i} value={opt.value === null ? '' : opt.value}>
@@ -158,19 +158,19 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
               </option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-500">
-            Algoritma akan menyesuaikan resolusi secara adaptif agar luaran di bawah batas ini.
+          <p className="text-[10px] sm:text-[11px] text-slate-500">
+            Algoritma otomatis menyesuaikan agar tepat di bawah batas target.
           </p>
         </div>
 
         {/* Grayscale Mode Checkbox */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <Palette className="w-4 h-4 text-amber-400" />
-            <span>Mode Skala Abu-abu (Monokrom / Hitam Putih)</span>
+          <label className="text-[11px] sm:text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            <span>Mode Skala Abu-abu (Monokrom)</span>
           </label>
           <label
-            className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors ${
+            className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors min-h-[40px] ${
               options.grayscale
                 ? 'bg-amber-500/10 border-amber-500/30 text-amber-200'
                 : 'bg-[#181822] border-white/10 text-slate-300'
@@ -181,16 +181,15 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
               checked={options.grayscale}
               onChange={handleGrayscaleToggle}
               disabled={disabled}
-              className="rounded border-white/20 text-sky-500 focus:ring-0 bg-black/40 w-4 h-4"
+              className="rounded border-white/20 text-sky-500 focus:ring-0 bg-black/40 w-4 h-4 flex-shrink-0"
             />
-            <span className="text-xs font-medium">Ubah warna dokumen menjadi Grayscale</span>
+            <span className="text-xs font-medium">Ubah dokumen menjadi Grayscale</span>
           </label>
-          <p className="text-[11px] text-slate-500">
-            Sangat ampuh memotong ukuran tambahan hingga 40% pada berkas ijazah/scan berwarna.
+          <p className="text-[10px] sm:text-[11px] text-slate-500">
+            Memotong ukuran tambahan hingga 40% pada berkas pindaian berwarna.
           </p>
         </div>
       </div>
     </div>
   );
 };
-

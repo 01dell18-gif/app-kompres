@@ -150,7 +150,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
   const savings = file && resultBlob ? calculateSavings(file.size, resultBlob.size) : null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4">
+    <div className="w-full max-w-4xl mx-auto px-1 sm:px-4 py-2 sm:py-4">
       {/* Hero Dropzone when no file selected */}
       {!file && (
         <div>
@@ -173,12 +173,12 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
 
       {/* Selected File Workspace */}
       {file && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* File Card Header */}
-          <div className="glass-card rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto min-w-0">
               {thumbnailUrl ? (
-                <div className="w-14 h-18 rounded-lg overflow-hidden border border-white/10 flex-shrink-0 bg-black/40">
+                <div className="w-12 h-16 sm:w-14 sm:h-18 rounded-lg overflow-hidden border border-white/10 flex-shrink-0 bg-black/40">
                   <img
                     src={thumbnailUrl}
                     alt="Cover Preview"
@@ -186,18 +186,18 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
                   />
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-6 h-6" />
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
               )}
-              <div className="min-w-0">
-                <h4 className="font-semibold text-white text-sm sm:text-base truncate max-w-md">
+              <div className="min-w-0 flex-1">
+                <h4 className="font-semibold text-white text-xs sm:text-base truncate max-w-[220px] sm:max-w-md">
                   {file.name}
                 </h4>
-                <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-slate-400 mt-1">
                   <span>Ukuran: <strong className="text-slate-200">{formatBytes(file.size)}</strong></span>
                   <span>•</span>
-                  <span>Jumlah: <strong className="text-slate-200">{pageCount > 0 ? `${pageCount} Halaman` : 'Menghitung...'}</strong></span>
+                  <span><strong className="text-slate-200">{pageCount > 0 ? `${pageCount} Halaman` : 'Menghitung...'}</strong></span>
                 </div>
               </div>
             </div>
@@ -205,7 +205,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
             {status !== 'processing' && (
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-slate-400 hover:text-white hover:bg-white/5 transition-colors self-end sm:self-center"
+                className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Ganti Berkas</span>
@@ -213,7 +213,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
             )}
           </div>
 
-          {/* Settings Section (only if not yet processing/done) */}
+          {/* Settings Section */}
           {status === 'idle' && (
             <>
               <CompressionSettings
@@ -225,7 +225,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
               <div className="flex justify-end">
                 <button
                   onClick={handleStartCompression}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-xl shadow-sky-500/25 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-xl shadow-sky-500/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Mulai Kompresi PDF Sekarang</span>
@@ -236,19 +236,19 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
 
           {/* Processing State */}
           {status === 'processing' && (
-            <div className="glass-card rounded-2xl p-6 sm:p-8 text-center space-y-4">
+            <div className="glass-card rounded-2xl p-5 sm:p-8 text-center space-y-4">
               <ProgressBar progress={progress} statusMessage={statusMessage} />
-              <p className="text-xs text-slate-400">
-                Sedang memproses setiap halaman di memori lokal. Mohon tunggu beberapa detik...
+              <p className="text-[11px] sm:text-xs text-slate-400">
+                Sedang merender & mengompresi setiap halaman secara lokal di memori...
               </p>
             </div>
           )}
 
           {/* Error Message */}
           {status === 'error' && errorMessage && (
-            <div className="p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start gap-3">
+            <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs sm:text-sm flex items-start gap-3">
               <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <p className="font-semibold text-rose-200">Gagal Memproses Kompresi</p>
                 <p className="text-xs leading-relaxed">{errorMessage}</p>
                 <button
@@ -263,46 +263,46 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
 
           {/* Success / Result State */}
           {status === 'done' && resultBlob && savings && (
-            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border-emerald-500/30 bg-gradient-to-b from-[#121815]/90 to-[#101217]/90 shadow-2xl">
+            <div className="glass-card rounded-2xl p-5 sm:p-8 space-y-5 sm:space-y-6 border-emerald-500/30 bg-gradient-to-b from-[#121815]/90 to-[#101217]/90 shadow-2xl">
               <div className="flex items-center gap-3 text-emerald-400">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg">Kompresi PDF Berhasil Dilakukan!</h3>
-                  <p className="text-xs text-slate-400">Dokumen telah dioptimalkan secara lokal tanpa kehilangan susunan.</p>
+                  <h3 className="font-bold text-white text-base sm:text-lg">Kompresi PDF Berhasil!</h3>
+                  <p className="text-[11px] sm:text-xs text-slate-400">Dokumen telah dioptimalkan secara lokal di peramban.</p>
                 </div>
               </div>
 
               {/* Metric Comparison Boxes */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-black/30 border border-white/5 rounded-xl p-4">
-                  <span className="text-[11px] font-medium text-slate-400 block mb-1">Ukuran Awal</span>
-                  <span className="text-base sm:text-lg font-bold text-slate-200 font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="bg-black/30 border border-white/5 rounded-xl p-3 sm:p-4">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 block mb-1">Ukuran Awal</span>
+                  <span className="text-sm sm:text-lg font-bold text-slate-200 font-mono">
                     {formatBytes(file.size)}
                   </span>
                 </div>
 
-                <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-4">
-                  <span className="text-[11px] font-medium text-sky-400 block mb-1">Ukuran Baru</span>
-                  <span className="text-base sm:text-lg font-bold text-sky-300 font-mono">
+                <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-3 sm:p-4">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-sky-400 block mb-1">Ukuran Baru</span>
+                  <span className="text-sm sm:text-lg font-bold text-sky-300 font-mono">
                     {formatBytes(resultBlob.size)}
                   </span>
                 </div>
 
-                <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
-                  <span className="text-[11px] font-medium text-emerald-400 block mb-1">Total Penghematan</span>
-                  <span className="text-base sm:text-lg font-bold text-emerald-300 font-mono">
+                <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 sm:p-4">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-emerald-400 block mb-1">Total Penghematan</span>
+                  <span className="text-sm sm:text-lg font-bold text-emerald-300 font-mono">
                     Hemat {savings.percentage}% ({formatBytes(savings.savedBytes)})
                   </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 pt-2">
                 <button
                   onClick={handleDownload}
-                  className="w-full sm:flex-1 py-3 px-5 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:flex-1 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
                   <span>Unduh PDF Hasil Kompresi</span>
@@ -313,8 +313,8 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
                     onClick={() => setShowSplitViewer(true)}
                     className="w-full sm:w-auto py-3 px-4 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/15 text-slate-200 transition-colors flex items-center justify-center gap-1.5"
                   >
-                    <SlidersHorizontal className="w-4 h-4 text-sky-400" />
-                    <span>Bandingkan Visual (Before / After)</span>
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Bandingkan Kualitas</span>
                   </button>
                 )}
 
@@ -322,16 +322,16 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
                   onClick={handleReset}
                   className="w-full sm:w-auto py-3 px-4 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
                 >
-                  Kompres Berkas Lain
+                  Kompres Lain
                 </button>
               </div>
 
               {/* Chained Action: Merge with other files */}
               {onTransferToMerger && (
-                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white/[0.02] -mx-6 -mb-6 p-4 rounded-b-2xl">
-                  <div className="flex items-center gap-2 text-xs text-slate-300">
-                    <Layers className="w-4 h-4 text-sky-400" />
-                    <span>Ingin menyatukan hasil kompresi ini dengan lampiran lain?</span>
+                <div className="pt-3 sm:pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 bg-white/[0.02] -mx-5 sm:-mx-8 -mb-5 sm:-mb-8 p-3 sm:p-4 rounded-b-2xl">
+                  <div className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-300">
+                    <Layers className="w-4 h-4 text-sky-400 flex-shrink-0" />
+                    <span>Satukan hasil kompresi ini dengan lampiran lain?</span>
                   </div>
                   <button
                     onClick={() => {
@@ -342,9 +342,9 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
                         onTransferToMerger(mergedReadyFile);
                       }
                     }}
-                    className="text-xs font-medium text-sky-400 hover:text-sky-300 flex items-center gap-1 transition-colors"
+                    className="text-xs font-medium text-sky-400 hover:text-sky-300 flex items-center gap-1 transition-colors self-end sm:self-auto"
                   >
-                    <span>Lanjut ke Menu Gabung PDF</span>
+                    <span>Lanjut ke Gabung PDF</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -363,7 +363,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
           compressedUrl={compressedPreviewUrl}
           originalLabel="Halaman 1 Asli"
           compressedLabel="Halaman 1 Terkompresi"
-          title={`Perbandingan Kualitas: ${file?.name}`}
+          title={`Bandingkan Kualitas: ${file?.name}`}
         />
       )}
     </div>

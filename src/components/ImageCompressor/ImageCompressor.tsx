@@ -8,13 +8,11 @@ import {
   Sparkles,
   Archive,
   AlertCircle,
-  CheckCircle2,
   Check,
 } from 'lucide-react';
 import { Dropzone } from '../common/Dropzone';
 import { ImageSettings } from './ImageSettings';
 import { SplitViewer } from '../common/SplitViewer';
-import { ProgressBar } from '../common/ProgressBar';
 import { ImageProcessItem, ImageCompressOptions } from '../../types';
 import {
   getImageDimensions,
@@ -169,7 +167,7 @@ export const ImageCompressor: React.FC = () => {
   const aggregateSavings = calculateSavings(totalOriginalBytes, totalCompressedBytes);
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 space-y-6">
+    <div className="w-full max-w-5xl mx-auto px-1 sm:px-4 py-2 sm:py-4 space-y-4 sm:space-y-6">
       {/* Upload Dropzone */}
       <Dropzone
         accept="image/*"
@@ -184,14 +182,14 @@ export const ImageCompressor: React.FC = () => {
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+        <div className="p-3 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <button
             onClick={() => setErrorMessage('')}
-            className="text-slate-400 hover:text-white text-xs underline"
+            className="text-slate-400 hover:text-white text-xs underline flex-shrink-0"
           >
             Tutup
           </button>
@@ -200,7 +198,7 @@ export const ImageCompressor: React.FC = () => {
 
       {/* Workspace when items are selected */}
       {items.length > 0 && (
-        <div className="space-y-6 pb-24">
+        <div className="space-y-4 sm:space-y-6 pb-28 sm:pb-24">
           {/* Settings Section */}
           <ImageSettings
             options={options}
@@ -209,16 +207,16 @@ export const ImageCompressor: React.FC = () => {
           />
 
           {/* Action Header */}
-          <div className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#121218]">
+          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 bg-[#121218]">
             <div>
-              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-sky-400" />
                 <span>Antrean Citra ({items.length} Foto)</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5">
                 {status === 'done'
                   ? `${completedItems.length} dari ${items.length} foto berhasil dioptimalkan`
-                  : 'Siap dikompresi menggunakan prosesor perangkat lokal'}
+                  : 'Siap dikompresi di prosesor lokal perangkat'}
               </p>
             </div>
 
@@ -226,7 +224,7 @@ export const ImageCompressor: React.FC = () => {
               {status !== 'processing' && (
                 <button
                   onClick={handleClearAll}
-                  className="text-xs text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
+                  className="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
                 >
                   Hapus Semua
                 </button>
@@ -235,7 +233,7 @@ export const ImageCompressor: React.FC = () => {
               {status !== 'processing' && status !== 'done' && (
                 <button
                   onClick={handleStartBatchCompression}
-                  className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Kompres {items.length} Foto Sekarang</span>
@@ -245,7 +243,7 @@ export const ImageCompressor: React.FC = () => {
               {status === 'done' && (
                 <button
                   onClick={handleStartBatchCompression}
-                  className="px-4 py-2 rounded-xl font-medium text-xs bg-white/10 hover:bg-white/15 text-slate-200 transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl font-medium text-xs bg-white/10 hover:bg-white/15 text-slate-200 transition-colors flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Kompres Ulang</span>
@@ -255,13 +253,13 @@ export const ImageCompressor: React.FC = () => {
           </div>
 
           {/* Images Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {items.map((item) => (
               <div
                 key={item.id}
                 className="glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-white/15 transition-all flex flex-col justify-between group"
               >
-                {/* Image Preview & status overlay */}
+                {/* Image Preview */}
                 <div className="relative aspect-video bg-black/40 overflow-hidden flex items-center justify-center">
                   <img
                     src={item.compressedUrl || item.originalUrl}
@@ -296,12 +294,12 @@ export const ImageCompressor: React.FC = () => {
                 </div>
 
                 {/* Card Body */}
-                <div className="p-4 space-y-2.5 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-4 space-y-2 flex-1 flex flex-col justify-between">
                   <div>
                     <h5 className="font-semibold text-white text-xs truncate" title={item.name}>
                       {item.name}
                     </h5>
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 mt-1">
+                    <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 mt-1">
                       <span>Asli: <strong className="text-slate-300">{formatBytes(item.originalSize)}</strong></span>
                       {item.compressedSize ? (
                         <span className="text-emerald-400 font-semibold font-mono">
@@ -318,7 +316,7 @@ export const ImageCompressor: React.FC = () => {
                     <div className="pt-2 border-t border-white/5 flex items-center gap-2">
                       <button
                         onClick={() => handleDownloadSingle(item)}
-                        className="flex-1 py-1.5 px-2.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
+                        className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Unduh</span>
@@ -340,32 +338,32 @@ export const ImageCompressor: React.FC = () => {
         </div>
       )}
 
-      {/* Global Batch Action Bar (Sticky at bottom when items are done) */}
+      {/* Global Batch Action Bar (Sticky at bottom on mobile & desktop) */}
       {status === 'done' && completedItems.length > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 max-w-4xl mx-auto z-30">
-          <div className="bg-[#101016]/95 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-4 sm:p-5 shadow-2xl shadow-black/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
-                <Check className="w-5 h-5" />
+        <div className="fixed bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 right-2.5 sm:right-4 max-w-4xl mx-auto z-30">
+          <div className="bg-[#101016]/95 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-3 sm:p-4 shadow-2xl shadow-black/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-white text-sm">
+                <h4 className="font-bold text-white text-xs sm:text-sm">
                   {completedItems.length} Foto Siap Diunduh
                 </h4>
-                <p className="text-xs text-slate-300">
-                  Total hemat <strong className="text-emerald-400 font-mono">{formatBytes(aggregateSavings.savedBytes)}</strong> ({aggregateSavings.percentage}%)
+                <p className="text-[11px] sm:text-xs text-slate-300">
+                  Hemat <strong className="text-emerald-400 font-mono">{formatBytes(aggregateSavings.savedBytes)}</strong> ({aggregateSavings.percentage}%)
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div className="w-full sm:w-auto">
               <button
                 onClick={handleDownloadZip}
                 disabled={isZipping}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
               >
                 <Archive className="w-4 h-4" />
-                <span>{isZipping ? `Mengemas ZIP (${zipProgress}%)...` : 'Unduh Semua Foto (.ZIP)'}</span>
+                <span>{isZipping ? `Mengemas ZIP (${zipProgress}%)...` : 'Unduh Semua (.ZIP)'}</span>
               </button>
             </div>
           </div>
@@ -387,4 +385,3 @@ export const ImageCompressor: React.FC = () => {
     </div>
   );
 };
-

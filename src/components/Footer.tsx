@@ -1,15 +1,15 @@
 import React from 'react';
-import { Shield, Cpu, Lock, CheckCircle2 } from 'lucide-react';
+import { Shield, Cpu, CheckCircle2 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="mt-20 border-t border-white/5 bg-[#07070a] text-slate-400 text-xs py-12">
+    <footer className="mt-16 sm:mt-20 border-t border-white/5 bg-[#07070a] text-slate-400 text-xs py-8 sm:py-12">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Features info grid inspired by Tepilayar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
-            <div className="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center mb-1">
-              <Shield className="w-5 h-5" />
+        {/* Features info grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center mb-1">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <h3 className="font-semibold text-slate-200 text-sm">Privasi Mutlak Sejak Desain</h3>
             <p className="text-slate-400 text-xs leading-relaxed">
@@ -17,9 +17,9 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
-            <div className="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-1">
-              <Cpu className="w-5 h-5" />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-1">
+              <Cpu className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <h3 className="font-semibold text-slate-200 text-sm">Pemrosesan Multi-Utas Klien</h3>
             <p className="text-slate-400 text-xs leading-relaxed">
@@ -27,9 +27,9 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1">
-              <CheckCircle2 className="w-5 h-5" />
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1">
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <h3 className="font-semibold text-slate-200 text-sm">Optimal Syarat CASN & Instansi</h3>
             <p className="text-slate-400 text-xs leading-relaxed">
@@ -38,9 +38,9 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/5 text-slate-500">
-          <p>© {new Date().getFullYear()} BerkasLokal. Solusi Utilitas Kompresi & Penggabungan Klien Berbasis Standar Web Modern.</p>
-          <div className="flex items-center gap-4 text-slate-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-white/5 text-slate-500 text-center sm:text-left">
+          <p>© {new Date().getFullYear()} FJY Channel Kompres. Utilitas Berkas 100% Lokal di Perangkat.</p>
+          <div className="flex items-center gap-2 text-slate-400">
             <span className="flex items-center gap-1.5 text-[11px] text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
               Sistem Lokal Siap Digunakan
@@ -51,4 +51,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-

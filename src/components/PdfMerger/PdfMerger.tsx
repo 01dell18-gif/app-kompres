@@ -6,7 +6,6 @@ import {
   Trash2,
   Layers,
   Download,
-  RotateCcw,
   Sparkles,
   AlertCircle,
   CheckCircle2,
@@ -17,7 +16,7 @@ import { Dropzone } from '../common/Dropzone';
 import { ProgressBar } from '../common/ProgressBar';
 import { PdfMergeItem } from '../../types';
 import { getPdfInfoAndThumbnail, mergePdfs } from '../../services/pdfService';
-import { formatBytes, getTimestamp } from '../../utils/formatters';
+import { formatBytes } from '../../utils/formatters';
 import {
   validatePdfFile,
   MAX_MERGE_CUMULATIVE_BYTES,
@@ -105,11 +104,10 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
       setItems((prev) => {
         const combined = [...prev, ...newItems];
-        // Check cumulative size
         const totalBytes = combined.reduce((sum, item) => sum + item.size, 0);
         if (totalBytes > MAX_MERGE_CUMULATIVE_BYTES) {
           setErrorMessage(
-            `Peringatan: Total kapasitas (${formatBytes(totalBytes)}) melebihi anjuran 200 MB untuk performa optimal memori.`
+            `Peringatan: Total kapasitas (${formatBytes(totalBytes)}) melebihi anjuran 200 MB untuk performa optimal.`
           );
         }
         return combined;
@@ -204,13 +202,13 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
   const totalSizeBytes = items.reduce((sum, item) => sum + item.size, 0);
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 space-y-6">
+    <div className="w-full max-w-4xl mx-auto px-1 sm:px-4 py-2 sm:py-4 space-y-4 sm:space-y-6">
       {/* Upload Dropzone */}
       <Dropzone
         accept="application/pdf,.pdf"
         multiple={true}
         title="Pilih Beberapa Berkas PDF untuk Digabung"
-        subtitle="Susun berkas lampiran (KTP, Ijazah, Transkrip, Sertifikat) menjadi satu dokumen utuh."
+        subtitle="Satukan berkas lampiran (KTP, Ijazah, Transkrip, Sertifikat) menjadi satu dokumen utuh."
         icon={FilePlus}
         badge="Multi-Berkas PDF"
         onFilesSelected={handleFilesAdded}
@@ -219,21 +217,21 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
       {/* Loading state for file previews */}
       {status === 'loading-files' && (
-        <div className="glass-card rounded-2xl p-6 text-center">
+        <div className="glass-card rounded-2xl p-4 sm:p-6 text-center">
           <ProgressBar progress={50} statusMessage={statusMessage} />
         </div>
       )}
 
       {/* Error alert */}
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+        <div className="p-3 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <button
             onClick={() => setErrorMessage('')}
-            className="text-slate-400 hover:text-white text-xs underline"
+            className="text-slate-400 hover:text-white text-xs underline flex-shrink-0"
           >
             Tutup
           </button>
@@ -242,24 +240,24 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
       {/* Document List & Reorder Section */}
       {items.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Header Summary Bar */}
-          <div className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#121218]">
+          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 bg-[#121218]">
             <div>
-              <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
                 <Layers className="w-4 h-4 text-sky-400" />
                 <span>Daftar Dokumen ({items.length} Berkas)</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Total <strong className="text-slate-200">{totalPages} Halaman</strong> • Kapasitas <strong className="text-slate-200">{formatBytes(totalSizeBytes)}</strong>
+              <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                Total <strong className="text-slate-200">{totalPages} Halaman</strong> • <strong className="text-slate-200">{formatBytes(totalSizeBytes)}</strong>
               </p>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <div className="flex items-center justify-end w-full sm:w-auto">
               <button
                 onClick={handleClearAll}
                 disabled={status === 'merging'}
-                className="text-xs text-rose-400 hover:text-rose-300 px-3 py-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
+                className="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1 rounded-lg hover:bg-rose-500/10 transition-colors"
               >
                 Hapus Semua
               </button>
@@ -267,20 +265,20 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
           </div>
 
           {/* Cards List */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {items.map((item, index) => (
               <div
                 key={item.id}
-                className="glass-card rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-3 border border-white/5 hover:border-white/10 transition-colors group"
+                className="glass-card rounded-2xl p-2.5 sm:p-4 flex items-center justify-between gap-2.5 sm:gap-3 border border-white/5 hover:border-white/10 transition-colors"
               >
                 {/* Left: Index badge & thumbnail & details */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-xs text-slate-300 flex-shrink-0">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[11px] sm:text-xs text-slate-300 flex-shrink-0">
                     {index + 1}
                   </div>
 
                   {item.thumbnailUrl ? (
-                    <div className="w-10 h-14 rounded overflow-hidden border border-white/10 flex-shrink-0 bg-black/40">
+                    <div className="w-9 h-12 sm:w-10 sm:h-14 rounded overflow-hidden border border-white/10 flex-shrink-0 bg-black/40">
                       <img
                         src={item.thumbnailUrl}
                         alt="Page preview"
@@ -288,17 +286,17 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
                       />
                     </div>
                   ) : (
-                    <div className="w-10 h-10 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-5 h-5" />
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                   )}
 
-                  <div className="min-w-0">
-                    <p className="font-semibold text-white text-xs sm:text-sm truncate max-w-xs sm:max-w-md">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-white text-xs sm:text-sm truncate max-w-[170px] sm:max-w-md">
                       {item.name}
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
-                      <span>{item.pageCount} Halaman</span>
+                    <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-400 mt-0.5">
+                      <span>{item.pageCount} Hal</span>
                       <span>•</span>
                       <span>{formatBytes(item.size)}</span>
                     </div>
@@ -306,32 +304,32 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
                 </div>
 
                 {/* Right: Reorder and Remove buttons */}
-                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                   <button
                     onClick={() => handleMoveUp(index)}
                     disabled={index === 0 || status === 'merging'}
                     title="Pindahkan Ke Atas"
-                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                    className="p-1.5 sm:p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition-colors"
                   >
-                    <ArrowUp className="w-4 h-4" />
+                    <ArrowUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
                   <button
                     onClick={() => handleMoveDown(index)}
                     disabled={index === items.length - 1 || status === 'merging'}
                     title="Pindahkan Ke Bawah"
-                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                    className="p-1.5 sm:p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition-colors"
                   >
-                    <ArrowDown className="w-4 h-4" />
+                    <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
 
                   <button
                     onClick={() => handleRemove(index)}
                     disabled={status === 'merging'}
                     title="Hapus Berkas"
-                    className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors ml-1"
+                    className="p-1.5 sm:p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors ml-0.5"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
@@ -340,27 +338,25 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
           {/* Merge Configurations */}
           {status !== 'merging' && status !== 'done' && (
-            <div className="glass-card rounded-2xl p-5 space-y-4">
+            <div className="glass-card rounded-2xl p-4 sm:p-5 space-y-3 sm:space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-[11px] sm:text-xs font-semibold text-slate-300">
                   Nama Berkas Luaran:
                 </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={customFilename}
-                    onChange={(e) => setCustomFilename(e.target.value)}
-                    placeholder="dokumen-tergabung.pdf"
-                    className="flex-1 bg-[#181822] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={customFilename}
+                  onChange={(e) => setCustomFilename(e.target.value)}
+                  placeholder="dokumen-tergabung.pdf"
+                  className="w-full bg-[#181822] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+                />
               </div>
 
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end pt-1">
                 <button
                   onClick={handleStartMerge}
                   disabled={items.length < 2}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-xl shadow-sky-500/25 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-xl shadow-sky-500/25 transition-all flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Gabungkan {items.length} PDF Sekarang</span>
@@ -371,9 +367,9 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
           {/* Progress while merging */}
           {status === 'merging' && (
-            <div className="glass-card rounded-2xl p-6 sm:p-8 text-center space-y-4">
+            <div className="glass-card rounded-2xl p-5 sm:p-8 text-center space-y-4">
               <ProgressBar progress={progress} statusMessage={statusMessage} />
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400">
                 Menyalin dan menyusun seluruh indeks halaman tanpa upload peladen...
               </p>
             </div>
@@ -381,26 +377,26 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
 
           {/* Result State */}
           {status === 'done' && mergedBlob && (
-            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border-emerald-500/30 bg-gradient-to-b from-[#121815]/90 to-[#101217]/90 shadow-2xl">
+            <div className="glass-card rounded-2xl p-5 sm:p-8 space-y-5 sm:space-y-6 border-emerald-500/30 bg-gradient-to-b from-[#121815]/90 to-[#101217]/90 shadow-2xl">
               <div className="flex items-center gap-3 text-emerald-400">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg">
+                  <h3 className="font-bold text-white text-base sm:text-lg">
                     Penggabungan PDF Berhasil!
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    {items.length} berkas berhasil disatukan menjadi 1 file tunggal ({totalPages} halaman).
+                  <p className="text-[11px] sm:text-xs text-slate-400">
+                    {items.length} berkas berhasil disatukan ({totalPages} halaman).
                   </p>
                 </div>
               </div>
 
               {/* Metric Box */}
-              <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-sky-500/10 border border-sky-500/30 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
                 <div>
-                  <span className="text-[11px] font-medium text-sky-400 block mb-1">Ukuran Berkas Akhir</span>
-                  <span className="text-lg font-bold text-sky-300 font-mono">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-sky-400 block mb-1">Ukuran Berkas Akhir</span>
+                  <span className="text-base sm:text-lg font-bold text-sky-300 font-mono">
                     {formatBytes(mergedBlob.size)}
                   </span>
                 </div>
@@ -410,13 +406,13 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 pt-2">
                 <button
                   onClick={handleDownload}
-                  className="w-full sm:flex-1 py-3 px-5 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:flex-1 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Unduh Dokumen PDF Gabungan</span>
+                  <span>Unduh Dokumen Gabungan</span>
                 </button>
 
                 <button
@@ -430,15 +426,15 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
                   onClick={handleClearAll}
                   className="w-full sm:w-auto py-3 px-4 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
                 >
-                  Gabung Dokumen Baru
+                  Gabung Berkas Baru
                 </button>
               </div>
 
-              {/* Chained Action: Direct Transfer to PDF Compressor! */}
-              <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white/[0.02] -mx-6 -mb-6 p-4 rounded-b-2xl">
-                <div className="flex items-center gap-2 text-xs text-slate-300">
-                  <Zap className="w-4 h-4 text-amber-400" />
-                  <span>Ukuran hasil gabungan melebihi batas upload portal?</span>
+              {/* Chained Action */}
+              <div className="pt-3 sm:pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 bg-white/[0.02] -mx-5 sm:-mx-8 -mb-5 sm:-mb-8 p-3 sm:p-4 rounded-b-2xl">
+                <div className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-300">
+                  <Zap className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <span>Hasil gabungan melebihi batas upload portal?</span>
                 </div>
                 <button
                   onClick={() => {
@@ -450,7 +446,7 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
                     });
                     onTransferToCompressor(fileForCompressor);
                   }}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all flex items-center justify-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Lanjut Kompres Hasil Gabungan Ini</span>
@@ -463,4 +459,3 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({
     </div>
   );
 };
-

@@ -1,10 +1,10 @@
 @echo off
-title BerkasLokal - Aplikasi Kompres & Gabung Berkas
+title FJY Channel Kompres - PDF & Foto Lokal
 color 0B
 cls
 
 echo ========================================================
-echo        BERKASLOKAL - 100%% CLIENT-SIDE WEB APP
+echo        FJY CHANNEL KOMPRES - 100%% CLIENT-SIDE
 echo   Kompres PDF, Gabung PDF, dan Kompres Citra Massal
 echo ========================================================
 echo.
@@ -50,5 +50,5 @@ echo.
 :: Jalankan browser otomatis ke localhost:5173
 start "" http://localhost:5173/
 
-:: Jalankan Vite dengan host terbuka agar bisa diakses perangkat lain di LAN/Wi-Fi
+:: Jalankan Vite dengan host terbuka agar bisa diakses HP/perangkat lain di Wi-Fi yang sama
 call npm run dev -- --host

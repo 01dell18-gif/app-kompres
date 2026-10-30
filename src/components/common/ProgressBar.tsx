@@ -23,14 +23,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <div className="w-full space-y-2">
       <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-slate-200 font-medium">
-          <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+        <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-medium">
+          <Loader2 className="w-4 h-4 animate-spin text-sky-500 dark:text-sky-400" />
           <span>{statusMessage}</span>
         </div>
-        <span className="font-mono font-semibold text-sky-400">{Math.round(progress)}%</span>
+        <span className="font-mono font-semibold text-sky-600 dark:text-sky-400">{Math.round(progress)}%</span>
       </div>
 
-      <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/10">
+      <div className="w-full h-2.5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden p-[1px] border border-slate-300 dark:border-white/10">
         <div
           className={`h-full rounded-full bg-gradient-to-r ${colorMap[color]} transition-all duration-300 ease-out`}
           style={{ width: `${Math.max(3, Math.min(100, progress))}%` }}
@@ -38,9 +38,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       </div>
 
       {subMessage && (
-        <p className="text-[11px] text-slate-400 text-right">{subMessage}</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400 text-right">{subMessage}</p>
       )}
     </div>
   );
 };
-

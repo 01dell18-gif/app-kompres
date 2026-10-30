@@ -25,35 +25,35 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
     {
       id: 'extreme',
       title: 'Ekstrem (Screen / Web)',
-      desc: 'Ukuran paling kecil, resolusi ~72 DPI. Ideal untuk syarat batas <200 KB atau <500 KB.',
-      tag: 'Ukuran Terkecil',
+      desc: 'Ukuran paling hemat (~97 DPI). Teks pindaian KTP & ijazah tetap terbaca jelas, ideal untuk batas <200 KB atau <500 KB.',
+      tag: 'Hemat Maksimal',
       icon: Zap,
-      scale: 0.95,
-      quality: 0.42,
+      scale: 1.35,
+      quality: 0.52,
     },
     {
       id: 'balanced',
       title: 'Seimbang (Rekomendasi)',
-      desc: 'Keseimbangan terbaik (~150 DPI). Teks dan tabel sangat jernih dengan penghematan 50%-80%.',
-      tag: 'Bawaan Standar',
+      desc: 'Keseimbangan optimal (~126 DPI). Huruf, angka, stempel & tabel sangat tajam dengan penghematan 50%-75%.',
+      tag: 'Kualitas Tajam',
       icon: Sparkles,
-      scale: 1.3,
-      quality: 0.63,
+      scale: 1.75,
+      quality: 0.68,
     },
     {
       id: 'light',
       title: 'Ringan (Kualitas Cetak)',
-      desc: 'Mempertahankan resolusi tinggi (~300 DPI). Penurunan ukuran moderat, siap cetak fisik.',
-      tag: 'Kualitas Tinggi',
+      desc: 'Resolusi tinggi studio (~158 DPI). Menjaga detail grafis halus, siap dicetak fisik tanpa blur.',
+      tag: 'Siap Cetak',
       icon: Printer,
-      scale: 1.7,
-      quality: 0.82,
+      scale: 2.2,
+      quality: 0.85,
     },
   ];
 
   const targetSizeOptions = [
     { label: 'Bebas (Sesuai Preset)', value: null },
-    { label: '< 200 KB (CASN/BUMN)', value: 200 },
+    { label: '< 200 KB (CASN / BUMN)', value: 200 },
     { label: '< 500 KB (Portal Instansi)', value: 500 },
     { label: '< 1000 KB (1 MB)', value: 1000 },
   ];
@@ -159,7 +159,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
             ))}
           </select>
           <p className="text-[10px] sm:text-[11px] text-slate-500">
-            Algoritma otomatis menyesuaikan agar tepat di bawah batas target.
+            Algoritma otomatis menyesuaikan kerapatan agar teks tetap tajam dan di bawah batas target.
           </p>
         </div>
 
@@ -186,7 +186,7 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
             <span className="text-xs font-medium">Ubah dokumen menjadi Grayscale</span>
           </label>
           <p className="text-[10px] sm:text-[11px] text-slate-500">
-            Memotong ukuran tambahan hingga 40% pada berkas pindaian berwarna.
+            Meningkatkan kontras teks dan memotong ukuran dokumen pindaian hingga 40% tambahan.
           </p>
         </div>
       </div>

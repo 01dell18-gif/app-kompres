@@ -24,23 +24,26 @@ export async function getPdfInfoAndThumbnail(file: File): Promise<{
 
     // Render page 1 thumbnail
     const page = await pdfDoc.getPage(1);
-    const viewport = page.getViewport({ scale: 0.4 }); // Thumbnail size
+    const viewport = page.getViewport({ scale: 0.45 });
 
     const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
     const ctx = canvas.getContext('2d');
 
     if (!ctx) {
       throw new Error('Canvas 2D context tidak tersedia.');
     }
 
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
     await page.render({
       canvasContext: ctx,
       viewport,
     }).promise;
 
-    const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.8);
+    const thumbnailUrl = canvas.toDataURL('image/jpeg', 0.85);
 
     // Clean up
     canvas.width = 0;
@@ -56,7 +59,7 @@ export async function getPdfInfoAndThumbnail(file: File): Promise<{
 }
 
 /**
- * Convert HTML canvas to JPEG binary ArrayBuffer
+ * Convert HTML canvas to JPEG binary ArrayBuffer with optimal encoding
  */
 function canvasToJpegBuffer(canvas: HTMLCanvasElement, quality: number): Promise<ArrayBuffer> {
   return new Promise((resolve, reject) => {
@@ -80,7 +83,9 @@ function canvasToJpegBuffer(canvas: HTMLCanvasElement, quality: number): Promise
 }
 
 /**
- * Compress a PDF file locally in the browser
+ * High-Quality PDF Compression in Browser Memory
+ * Preserves exact original page dimensions (A4, Letter, etc.) while rendering
+ * high-resolution raster layers and recompressing with perceptual JPEG quantization.
  */
 export async function compressPdf(
   file: File,
@@ -100,32 +105,29 @@ export async function compressPdf(
     const pdfDoc = await loadingTask.promise;
     const totalPages = pdfDoc.numPages;
 
-    // Determine scale and quality
-    let scale = options.scale;
-    let quality = options.quality;
+    // Base scale & quality tuned for exceptional readability
+    let renderScale = options.scale;
+    let jpegQuality = options.quality;
 
-    // If target size is specified, dynamically calculate appropriate parameters
+    // Dynamic adjustment if target file size is specified
     if (options.targetSizeKB && options.targetSizeKB > 0) {
       const targetBytes = options.targetSizeKB * 1024;
       const originalBytes = file.size;
       const targetRatio = targetBytes / originalBytes;
 
       if (targetRatio < 0.25) {
-        // Aggressive compression required
-        scale = 0.85;
-        quality = 0.38;
+        // Strict limit (e.g. <200 KB for CASN): maintain at least 1.25x scale so text is sharp
+        renderScale = 1.25;
+        jpegQuality = 0.46;
       } else if (targetRatio < 0.5) {
-        // Strong compression
-        scale = 1.05;
-        quality = 0.5;
+        renderScale = 1.45;
+        jpegQuality = 0.58;
       } else if (targetRatio < 0.8) {
-        // Moderate compression
-        scale = 1.25;
-        quality = 0.65;
+        renderScale = 1.7;
+        jpegQuality = 0.68;
       } else {
-        // Light compression
-        scale = 1.45;
-        quality = 0.78;
+        renderScale = 2.0;
+        jpegQuality = 0.80;
       }
     }
 
@@ -141,79 +143,104 @@ export async function compressPdf(
       );
 
       const page = await pdfDoc.getPage(pageNum);
-      const viewport = page.getViewport({ scale });
+
+      // Preserve original PDF page dimensions in points (72pt/inch)
+      const origViewport = page.getViewport({ scale: 1.0 });
+
+      // Render at higher pixel resolution for crisp, legible text
+      const renderViewport = page.getViewport({ scale: renderScale });
 
       const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext('2d');
+      canvas.width = Math.round(renderViewport.width);
+      canvas.height = Math.round(renderViewport.height);
+      const ctx = canvas.getContext('2d', { alpha: false });
 
       if (!ctx) {
         throw new Error('Gagal menginisialisasi Canvas Context untuk merender halaman.');
       }
 
-      // If grayscale is requested, apply filter
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      // Fill white background to avoid transparent artifacts
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Apply grayscale filter if enabled
       if (options.grayscale) {
-        ctx.filter = 'grayscale(100%)';
+        ctx.filter = 'grayscale(100%) contrast(108%)';
       }
 
       await page.render({
         canvasContext: ctx,
-        viewport,
+        viewport: renderViewport,
       }).promise;
 
-      // Capture original preview snapshot of page 1 if needed
-      if (pageNum === 1) {
-        compressedPreviewUrl = canvas.toDataURL('image/jpeg', quality);
+      // Reset filter
+      if (options.grayscale) {
+        ctx.filter = 'none';
       }
 
-      const jpegBuffer = await canvasToJpegBuffer(canvas, quality);
+      // Capture original & compressed preview snapshots of page 1
+      if (pageNum === 1) {
+        compressedPreviewUrl = canvas.toDataURL('image/jpeg', jpegQuality);
+      }
+
+      const jpegBuffer = await canvasToJpegBuffer(canvas, jpegQuality);
       const embeddedImage = await newPdf.embedJpg(jpegBuffer);
 
-      // Add page with original viewport dimensions
-      const newPage = newPdf.addPage([viewport.width, viewport.height]);
+      // Add page with EXACT original paper size (A4 / Letter / Legal)
+      const newPage = newPdf.addPage([origViewport.width, origViewport.height]);
       newPage.drawImage(embeddedImage, {
         x: 0,
         y: 0,
-        width: viewport.width,
-        height: viewport.height,
+        width: origViewport.width,
+        height: origViewport.height,
       });
 
       // Cleanup canvas memory
       canvas.width = 0;
       canvas.height = 0;
 
-      // Yield event loop briefly to ensure UI responsiveness (60fps)
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      // Yield event loop briefly to ensure UI fluidity (60 FPS)
+      await new Promise((resolve) => setTimeout(resolve, 15));
     }
 
     onProgress?.(totalPages, totalPages, 'Menyusun dan menyimpan dokumen terkompresi...');
     const outputBytes = await newPdf.save();
     let resultBlob = new Blob([outputBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
 
-    // Check if target size was requested and if we exceeded it, do a fast secondary pass if needed
+    // Adaptive secondary pass if strict target size was set and still exceeded
     if (options.targetSizeKB && options.targetSizeKB > 0) {
       const targetBytes = options.targetSizeKB * 1024;
       if (resultBlob.size > targetBytes && totalPages <= 8) {
         onProgress?.(totalPages, totalPages, 'Menyesuaikan kerapatan agar tepat di bawah target...');
-        // Secondary pass with 20% lower scale and 25% lower quality
         const retryNewPdf = await PDFDocument.create();
-        const retryScale = Math.max(0.7, scale * 0.8);
-        const retryQuality = Math.max(0.28, quality * 0.75);
+        const retryScale = Math.max(1.1, renderScale * 0.85);
+        const retryQuality = Math.max(0.35, jpegQuality * 0.78);
 
         for (let p = 1; p <= totalPages; p++) {
           const pg = await pdfDoc.getPage(p);
+          const origVp = pg.getViewport({ scale: 1.0 });
           const vp = pg.getViewport({ scale: retryScale });
+
           const cvs = document.createElement('canvas');
-          cvs.width = vp.width;
-          cvs.height = vp.height;
-          const c = cvs.getContext('2d')!;
-          if (options.grayscale) c.filter = 'grayscale(100%)';
+          cvs.width = Math.round(vp.width);
+          cvs.height = Math.round(vp.height);
+          const c = cvs.getContext('2d', { alpha: false })!;
+          c.imageSmoothingEnabled = true;
+          c.imageSmoothingQuality = 'high';
+          c.fillStyle = '#FFFFFF';
+          c.fillRect(0, 0, cvs.width, cvs.height);
+
+          if (options.grayscale) c.filter = 'grayscale(100%) contrast(108%)';
           await pg.render({ canvasContext: c, viewport: vp }).promise;
+          if (options.grayscale) c.filter = 'none';
+
           const buf = await canvasToJpegBuffer(cvs, retryQuality);
           const img = await retryNewPdf.embedJpg(buf);
-          const nPg = retryNewPdf.addPage([vp.width, vp.height]);
-          nPg.drawImage(img, { x: 0, y: 0, width: vp.width, height: vp.height });
+          const nPg = retryNewPdf.addPage([origVp.width, origVp.height]);
+          nPg.drawImage(img, { x: 0, y: 0, width: origVp.width, height: origVp.height });
           cvs.width = 0;
           cvs.height = 0;
         }
@@ -270,7 +297,7 @@ export async function mergePdfs(
     }
 
     // Brief yield for UI fluidity
-    await new Promise((resolve) => setTimeout(resolve, 30));
+    await new Promise((resolve) => setTimeout(resolve, 25));
   }
 
   onProgress?.(files.length, files.length, 'Menyimpan dokumen gabungan...');

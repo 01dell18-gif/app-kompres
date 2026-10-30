@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, Image as ImageIcon, Maximize2, Target } from 'lucide-react';
+import { Sliders, Image as ImageIcon, Maximize2 } from 'lucide-react';
 import { ImageCompressOptions, ImageFormat } from '../../types';
 
 interface ImageSettingsProps {
@@ -29,20 +29,20 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
   ];
 
   return (
-    <div className="glass-card rounded-2xl p-5 sm:p-6 mb-6 space-y-6">
-      <div className="flex items-center gap-2.5 pb-4 border-b border-white/10">
-        <Sliders className="w-5 h-5 text-sky-400" />
-        <h3 className="font-semibold text-slate-100 text-base">Pengaturan Kompresi Citra Massal</h3>
+    <div className="glass-card rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 space-y-5">
+      <div className="flex items-center gap-2.5 pb-3 sm:pb-4 border-b border-black/5 dark:border-white/10">
+        <Sliders className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 dark:text-sky-400" />
+        <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">Pengaturan Kompresi Citra Massal</h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         {/* Quality Slider */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-slate-300">
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
               Kualitas Gambar:
             </label>
-            <span className="font-mono text-xs font-bold text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10 border border-sky-500/20">
+            <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10 border border-sky-500/20">
               {Math.round(options.quality * 100)}%
             </span>
           </div>
@@ -60,18 +60,18 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
               })
             }
             disabled={disabled}
-            className="w-full accent-sky-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+            className="w-full accent-sky-500 cursor-pointer h-2 bg-slate-200 dark:bg-slate-800 rounded-lg"
           />
 
-          <p className="text-[11px] text-slate-500">
-            Nilai 70%–80% adalah standar optimal (hemat 40%–75% tanpa penurunan kasat mata).
+          <p className="text-[11px] text-slate-500 dark:text-slate-500 leading-relaxed">
+            Nilai 75%–85% adalah standar optimal (hemat 40%–75% tanpa penurunan kasat mata).
           </p>
         </div>
 
         {/* Output Format */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <ImageIcon className="w-4 h-4 text-cyan-400" />
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <ImageIcon className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
             <span>Format Luaran:</span>
           </label>
           <select
@@ -83,7 +83,7 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
               })
             }
             disabled={disabled}
-            className="w-full bg-[#181822] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+            className="w-full bg-slate-50 dark:bg-[#181822] border border-slate-300 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-sky-500 min-h-[42px]"
           >
             {formats.map((fmt) => (
               <option key={fmt.id} value={fmt.id}>
@@ -91,15 +91,15 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
               </option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-slate-500 dark:text-slate-500 leading-relaxed">
             WebP menghasilkan file paling efisien; JPEG cocok untuk portal resmi CASN/BUMN.
           </p>
         </div>
 
         {/* Dimension Clamping */}
-        <div className="space-y-2">
-          <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <Maximize2 className="w-4 h-4 text-emerald-400" />
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <Maximize2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
             <span>Batasi Dimensi Maksimal:</span>
           </label>
           <select
@@ -111,7 +111,7 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
               })
             }
             disabled={disabled}
-            className="w-full bg-[#181822] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+            className="w-full bg-slate-50 dark:bg-[#181822] border border-slate-300 dark:border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-sky-500 min-h-[42px]"
           >
             {dimensions.map((dim, i) => (
               <option key={i} value={dim.value}>
@@ -119,7 +119,7 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
               </option>
             ))}
           </select>
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-slate-500 dark:text-slate-500 leading-relaxed">
             Menjaga aspek rasio tanpa pembesaran artifisial (upscaling).
           </p>
         </div>
@@ -127,4 +127,3 @@ export const ImageSettings: React.FC<ImageSettingsProps> = ({
     </div>
   );
 };
-

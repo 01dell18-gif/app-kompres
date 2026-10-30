@@ -20,7 +20,8 @@ export function getImageDimensions(file: File): Promise<{ width: number; height:
 }
 
 /**
- * Compress a single image in-memory using Canvas
+ * High-Quality Single Image Compression Engine
+ * Guarantees visual sharpness, proper color preservation, and smooth downscaling
  */
 export async function compressSingleImage(
   file: File,
@@ -40,7 +41,6 @@ export async function compressSingleImage(
     }
   }
 
-  // Use createImageBitmap if available, with fallback to HTMLImageElement
   let sourceWidth = 0;
   let sourceHeight = 0;
   let imgBitmap: ImageBitmap | null = null;
@@ -69,7 +69,7 @@ export async function compressSingleImage(
     URL.revokeObjectURL(objUrl);
   }
 
-  // Calculate target dimensions
+  // Calculate target dimensions preserving aspect ratio
   let targetWidth = sourceWidth;
   let targetHeight = sourceHeight;
 
@@ -90,17 +90,17 @@ export async function compressSingleImage(
   const canvas = document.createElement('canvas');
   canvas.width = targetWidth;
   canvas.height = targetHeight;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: outputMime !== 'image/jpeg' });
 
   if (!ctx) {
     throw new Error('Canvas 2D context tidak tersedia.');
   }
 
-  // Quality settings for smoothing
+  // High-order bicubic smoothing
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
-  // If converting transparent image (like PNG) to JPEG, fill white background
+  // If converting transparent image (like PNG) to JPEG, fill pure white background
   if (outputMime === 'image/jpeg') {
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, targetWidth, targetHeight);
@@ -114,7 +114,37 @@ export async function compressSingleImage(
     ctx.drawImage(imgElement, 0, 0, targetWidth, targetHeight);
   }
 
-  // Quality parameter (PNG ignores quality in canvas.toBlob)
+  // If downscaled significantly (by >1.3x), apply subtle sharpness touch to preserve crisp text and details
+  if (sourceWidth > targetWidth * 1.3 && targetWidth > 100 && targetHeight > 100) {
+    try {
+      const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+      const data = imgData.data;
+      const copy = new Uint8ClampedArray(data);
+      const w = targetWidth;
+      const h = targetHeight;
+      const amount = 0.18; // gentle unsharp touch
+
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const idx = (y * w + x) * 4;
+          const up = ((y - 1) * w + x) * 4;
+          const down = ((y + 1) * w + x) * 4;
+          const left = (y * w + (x - 1)) * 4;
+          const right = (y * w + (x + 1)) * 4;
+
+          for (let c = 0; c < 3; c++) {
+            const laplacian = 4 * copy[idx + c] - (copy[up + c] + copy[down + c] + copy[left + c] + copy[right + c]);
+            data[idx + c] = Math.max(0, Math.min(255, copy[idx + c] + laplacian * amount));
+          }
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    } catch {
+      // Fallback if security restrictions occur
+    }
+  }
+
+  // Quality parameter
   let quality = options.quality;
 
   // Handle target size approximation if specified
@@ -122,7 +152,7 @@ export async function compressSingleImage(
     const targetBytes = options.targetSizeKB * 1024;
     if (file.size > targetBytes) {
       const ratio = targetBytes / file.size;
-      quality = Math.max(0.2, Math.min(0.9, ratio * 0.85));
+      quality = Math.max(0.35, Math.min(0.88, ratio * 0.9));
     }
   }
 
@@ -214,4 +244,3 @@ export async function processBatchImages(
 
   await Promise.all(workers);
 }
-

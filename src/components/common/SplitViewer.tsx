@@ -61,19 +61,19 @@ export const SplitViewer: React.FC<SplitViewerProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/85 backdrop-blur-md">
-      <div className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-[#101016] border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+      <div className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-white dark:bg-[#101016] border border-slate-300 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-[#14141c]">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#14141c]">
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 flex-shrink-0" />
+            <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 dark:text-sky-400 flex-shrink-0" />
             <div className="min-w-0">
-              <h3 className="font-semibold text-white text-xs sm:text-base truncate">{title}</h3>
-              <p className="text-[10px] sm:text-xs text-slate-400 truncate">Geser garis untuk memeriksa piksel</p>
+              <h3 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-base truncate">{title}</h3>
+              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">Geser garis untuk memeriksa piksel</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors flex-shrink-0"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200/80 hover:bg-slate-300 dark:bg-white/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-colors flex-shrink-0"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -86,7 +86,7 @@ export const SplitViewer: React.FC<SplitViewerProps> = ({
           onTouchStart={() => setIsDragging(true)}
           onMouseMove={handleMouseMove}
           onTouchMove={handleTouchMove}
-          className="relative flex-1 min-h-[300px] sm:min-h-[420px] max-h-[65vh] sm:max-h-[70vh] bg-[#09090d] select-none overflow-hidden cursor-ew-resize flex items-center justify-center p-2 sm:p-4"
+          className="relative flex-1 min-h-[300px] sm:min-h-[420px] max-h-[65vh] sm:max-h-[70vh] bg-slate-950 select-none overflow-hidden cursor-ew-resize flex items-center justify-center p-2 sm:p-4"
         >
           {/* Compressed Image (Background) */}
           <div className="relative max-w-full max-h-full flex items-center justify-center">
@@ -117,7 +117,7 @@ export const SplitViewer: React.FC<SplitViewerProps> = ({
 
             {/* Draggable Divider Line */}
             <div
-              className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none"
+              className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_12px_rgba(255,255,255,0.9)] pointer-events-none"
               style={{ left: `${sliderPos}%` }}
             >
               <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-sky-500 text-white border-2 border-white shadow-xl flex items-center justify-center cursor-ew-resize pointer-events-auto">
@@ -128,11 +128,11 @@ export const SplitViewer: React.FC<SplitViewerProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-t border-white/10 bg-[#14141c] text-[10px] sm:text-xs text-slate-400 flex items-center justify-between">
-          <span className="truncate">Kiri: Asli • Kanan: Terkompresi</span>
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-t border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#14141c] text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 flex items-center justify-between">
+          <span className="truncate">Kiri: Asli • Kanan: Terkompresi / Restorasi</span>
           <button
             onClick={onClose}
-            className="px-3 sm:px-4 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium transition-colors flex-shrink-0"
+            className="px-3 sm:px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-white font-medium transition-colors flex-shrink-0"
           >
             Tutup
           </button>

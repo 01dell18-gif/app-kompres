@@ -173,7 +173,7 @@ export const ImageCompressor: React.FC = () => {
         accept="image/*"
         multiple={true}
         title="Pilih Beberapa Foto untuk Dikompresi Massal"
-        subtitle="Mendukung JPG, PNG, WebP, AVIF, BMP. Pemrosesan paralel multi-utas cepat & aman."
+        subtitle="Mendukung JPG, PNG, WebP, AVIF, BMP. Pemrosesan paralel multi-utas cepat & tajam."
         icon={ImageIcon}
         badge="Multi-Foto / Batch"
         onFilesSelected={handleFilesAdded}
@@ -182,14 +182,14 @@ export const ImageCompressor: React.FC = () => {
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="p-3 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center justify-between gap-3">
+        <div className="p-3 sm:p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <button
             onClick={() => setErrorMessage('')}
-            className="text-slate-400 hover:text-white text-xs underline flex-shrink-0"
+            className="text-slate-500 hover:text-slate-800 dark:hover:text-white text-xs underline flex-shrink-0"
           >
             Tutup
           </button>
@@ -207,13 +207,13 @@ export const ImageCompressor: React.FC = () => {
           />
 
           {/* Action Header */}
-          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 bg-[#121218]">
+          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 bg-slate-50 dark:bg-[#121218]">
             <div>
-              <h3 className="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-sky-400" />
+              <h3 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-sky-500 dark:text-sky-400" />
                 <span>Antrean Citra ({items.length} Foto)</span>
               </h3>
-              <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5">
+              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {status === 'done'
                   ? `${completedItems.length} dari ${items.length} foto berhasil dioptimalkan`
                   : 'Siap dikompresi di prosesor lokal perangkat'}
@@ -224,7 +224,7 @@ export const ImageCompressor: React.FC = () => {
               {status !== 'processing' && (
                 <button
                   onClick={handleClearAll}
-                  className="text-xs text-rose-400 hover:text-rose-300 px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
+                  className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 transition-colors"
                 >
                   Hapus Semua
                 </button>
@@ -243,7 +243,7 @@ export const ImageCompressor: React.FC = () => {
               {status === 'done' && (
                 <button
                   onClick={handleStartBatchCompression}
-                  className="px-3.5 py-2 rounded-xl font-medium text-xs bg-white/10 hover:bg-white/15 text-slate-200 transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl font-medium text-xs bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 transition-colors flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Kompres Ulang</span>
@@ -257,10 +257,10 @@ export const ImageCompressor: React.FC = () => {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="glass-card rounded-2xl overflow-hidden border border-white/5 hover:border-white/15 transition-all flex flex-col justify-between group"
+                className="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-white/5 hover:border-sky-400/50 dark:hover:border-white/15 transition-all flex flex-col justify-between group shadow-sm dark:shadow-none"
               >
                 {/* Image Preview */}
-                <div className="relative aspect-video bg-black/40 overflow-hidden flex items-center justify-center">
+                <div className="relative aspect-video bg-slate-200 dark:bg-black/40 overflow-hidden flex items-center justify-center">
                   <img
                     src={item.compressedUrl || item.originalUrl}
                     alt={item.name}
@@ -285,7 +285,7 @@ export const ImageCompressor: React.FC = () => {
                   {status !== 'processing' && (
                     <button
                       onClick={() => handleRemoveItem(item.id)}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-slate-300 hover:text-rose-400 hover:bg-black/80 transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-slate-200 hover:text-rose-400 hover:bg-black/80 transition-colors"
                       title="Hapus foto"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -296,13 +296,13 @@ export const ImageCompressor: React.FC = () => {
                 {/* Card Body */}
                 <div className="p-3 sm:p-4 space-y-2 flex-1 flex flex-col justify-between">
                   <div>
-                    <h5 className="font-semibold text-white text-xs truncate" title={item.name}>
+                    <h5 className="font-semibold text-slate-900 dark:text-white text-xs truncate" title={item.name}>
                       {item.name}
                     </h5>
-                    <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 mt-1">
-                      <span>Asli: <strong className="text-slate-300">{formatBytes(item.originalSize)}</strong></span>
+                    <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                      <span>Asli: <strong className="text-slate-700 dark:text-slate-300">{formatBytes(item.originalSize)}</strong></span>
                       {item.compressedSize ? (
-                        <span className="text-emerald-400 font-semibold font-mono">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold font-mono">
                           {formatBytes(item.compressedSize)}
                         </span>
                       ) : (
@@ -313,10 +313,10 @@ export const ImageCompressor: React.FC = () => {
 
                   {/* Actions per card */}
                   {item.status === 'done' && item.compressedUrl && (
-                    <div className="pt-2 border-t border-white/5 flex items-center gap-2">
+                    <div className="pt-2 border-t border-slate-200 dark:border-white/5 flex items-center gap-2">
                       <button
                         onClick={() => handleDownloadSingle(item)}
-                        className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
+                        className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500/15 dark:bg-emerald-500/20 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Unduh</span>
@@ -325,9 +325,9 @@ export const ImageCompressor: React.FC = () => {
                       <button
                         onClick={() => setInspectItem(item)}
                         title="Bandingkan Before/After"
-                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors"
                       >
-                        <SlidersHorizontal className="w-3.5 h-3.5 text-sky-400" />
+                        <SlidersHorizontal className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
                       </button>
                     </div>
                   )}
@@ -341,17 +341,17 @@ export const ImageCompressor: React.FC = () => {
       {/* Global Batch Action Bar (Sticky at bottom on mobile & desktop) */}
       {status === 'done' && completedItems.length > 0 && (
         <div className="fixed bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 right-2.5 sm:right-4 max-w-4xl mx-auto z-30">
-          <div className="bg-[#101016]/95 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-3 sm:p-4 shadow-2xl shadow-black/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-white/95 dark:bg-[#101016]/95 backdrop-blur-xl border border-slate-300 dark:border-sky-500/30 rounded-2xl p-3 sm:p-4 shadow-xl dark:shadow-2xl dark:shadow-black/80 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 w-full sm:w-auto">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
                 <Check className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-white text-xs sm:text-sm">
+                <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
                   {completedItems.length} Foto Siap Diunduh
                 </h4>
-                <p className="text-[11px] sm:text-xs text-slate-300">
-                  Hemat <strong className="text-emerald-400 font-mono">{formatBytes(aggregateSavings.savedBytes)}</strong> ({aggregateSavings.percentage}%)
+                <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">
+                  Hemat <strong className="text-emerald-600 dark:text-emerald-400 font-mono">{formatBytes(aggregateSavings.savedBytes)}</strong> ({aggregateSavings.percentage}%)
                 </p>
               </div>
             </div>

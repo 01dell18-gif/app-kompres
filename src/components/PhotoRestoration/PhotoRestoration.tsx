@@ -83,7 +83,6 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
       setOriginalWidth(img.naturalWidth);
       setOriginalHeight(img.naturalHeight);
       sourceImageRef.current = img;
-      // Trigger initial restoration
       runRestoration(img, DEFAULT_RESTORATION_SETTINGS);
     };
     img.src = url;
@@ -92,7 +91,6 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
   const runRestoration = async (imgElement: HTMLImageElement, currentSettings: RestorationSettings) => {
     setIsProcessing(true);
     try {
-      // Yield to let UI show spinner
       await new Promise((r) => setTimeout(r, 20));
       const res = await processRestoration(imgElement, currentSettings);
 
@@ -147,7 +145,7 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
         contrast: 25,
         brightness: 5,
         saturation: 15,
-        temperature: -5, // tone balance
+        temperature: -5,
         denoise: 25,
       };
     } else if (presetType === 'denoise') {
@@ -238,21 +236,21 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
       {file && (
         <div className="space-y-4 sm:space-y-6">
           {/* Header Bar */}
-          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#121218]">
+          <div className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-50 dark:bg-[#121218]">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-500 text-white flex items-center justify-center flex-shrink-0 shadow-md">
                 <Wand2 className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <h4 className="font-semibold text-white text-xs sm:text-sm truncate max-w-[220px] sm:max-w-md">
+                <h4 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm truncate max-w-[220px] sm:max-w-md">
                   {file.name}
                 </h4>
-                <div className="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400 mt-0.5">
-                  <span>Asli: <strong className="text-slate-200">{originalWidth}×{originalHeight} px</strong> ({formatBytes(file.size)})</span>
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <span>Asli: <strong className="text-slate-800 dark:text-slate-200">{originalWidth}×{originalHeight} px</strong> ({formatBytes(file.size)})</span>
                   {restoredWidth > 0 && settings.upscale > 1 && (
                     <>
                       <span>•</span>
-                      <span className="text-sky-400 font-semibold">Hasil: {restoredWidth}×{restoredHeight} px ({settings.upscale}x)</span>
+                      <span className="text-sky-600 dark:text-sky-400 font-semibold">Hasil: {restoredWidth}×{restoredHeight} px ({settings.upscale}x)</span>
                     </>
                   )}
                 </div>
@@ -261,7 +259,7 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
 
             <button
               onClick={handleReset}
-              className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-3 py-1.5 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-200/60 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Ganti Foto</span>
@@ -269,14 +267,14 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
           </div>
 
           {/* Interactive Split-View Comparison Screen */}
-          <div className="glass-card rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-            <div className="flex items-center justify-between px-4 py-2.5 bg-[#14141c] border-b border-white/10 text-xs">
-              <span className="font-semibold text-slate-200 flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-sky-400" />
+          <div className="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg dark:shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-100 dark:bg-[#14141c] border-b border-slate-200 dark:border-white/10 text-xs">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-sky-500 dark:text-sky-400" />
                 <span>Pratinjau Interaktif: Geser Pembagi (Before / After)</span>
               </span>
               {isProcessing && (
-                <span className="flex items-center gap-1.5 text-sky-400 text-[11px] font-medium">
+                <span className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 text-[11px] font-medium">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   Memproses...
                 </span>
@@ -289,11 +287,11 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
               onTouchStart={() => setIsDraggingSlider(true)}
               onMouseMove={handleMouseMove}
               onTouchMove={handleTouchMove}
-              className="relative w-full h-[320px] sm:h-[450px] bg-[#08080c] select-none overflow-hidden cursor-ew-resize flex items-center justify-center p-2 sm:p-4"
+              className="relative w-full h-[320px] sm:h-[450px] bg-slate-950 select-none overflow-hidden cursor-ew-resize flex items-center justify-center p-2 sm:p-4"
             >
               {restoredUrl ? (
                 <div className="relative max-w-full max-h-full flex items-center justify-center">
-                  {/* Restored Image (Right/Background) */}
+                  {/* Restored Image */}
                   <img
                     src={restoredUrl}
                     alt="Hasil Restorasi"
@@ -339,7 +337,7 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
 
           {/* Quick Presets Row */}
           <div className="space-y-2">
-            <span className="text-xs font-semibold text-slate-300">Preset Cepat:</span>
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Preset Cepat:</span>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
               {[
                 { id: 'auto-enhance', label: 'Auto Enhance', icon: Sparkles, desc: 'Kontras & Kejernihan' },
@@ -356,15 +354,15 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                     onClick={() => handleApplyPreset(p.id as any)}
                     className={`p-2.5 rounded-xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-sky-500/15 border-sky-500/40 text-sky-300 shadow-md'
-                        : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.05] text-slate-300'
+                        ? 'bg-sky-500/15 border-sky-500/40 text-sky-700 dark:text-sky-300 shadow-sm'
+                        : 'bg-white/60 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/[0.05] text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Icon className="w-3.5 h-3.5 text-sky-400" />
+                      <Icon className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
                       <span className="font-semibold text-xs truncate">{p.label}</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 truncate">{p.desc}</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{p.desc}</span>
                   </button>
                 );
               })}
@@ -373,33 +371,33 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
 
           {/* Fine Tuning Sliders & AI Upscaler */}
           <div className="glass-card rounded-2xl p-4 sm:p-6 space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <h4 className="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-sky-400" />
+            <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10">
+              <h4 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-sky-500 dark:text-sky-400" />
                 <span>Pengaturan Penyesuaian Kualitas & Resolusi</span>
               </h4>
               <button
                 onClick={() => setSettings(DEFAULT_RESTORATION_SETTINGS)}
-                className="text-[11px] text-slate-400 hover:text-white transition-colors"
+                className="text-[11px] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors"
               >
                 Reset Nilai
               </button>
             </div>
 
             {/* AI Image Upscaler / Super Resolution Row */}
-            <div className="bg-sky-500/10 border border-sky-500/20 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <span className="text-xs font-bold text-sky-300 flex items-center gap-1.5">
-                  <Maximize2 className="w-4 h-4 text-sky-400" />
+                <span className="text-xs font-bold text-sky-700 dark:text-sky-300 flex items-center gap-1.5">
+                  <Maximize2 className="w-4 h-4 text-sky-500 dark:text-sky-400" />
                   <span>AI Super Resolution / Image Upscaler</span>
                 </span>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                   Perbesar resolusi foto dan tambah kerapatan piksel agar tidak pecah saat dicetak.
                 </p>
               </div>
 
               {/* Upscale Radio Buttons */}
-              <div className="flex items-center gap-1.5 bg-[#0e0e14] p-1 rounded-xl border border-white/10 w-full sm:w-auto justify-center">
+              <div className="flex items-center gap-1.5 bg-slate-200/80 dark:bg-[#0e0e14] p-1 rounded-xl border border-slate-300 dark:border-white/10 w-full sm:w-auto justify-center">
                 {[
                   { value: 1, label: '1x (Asli)' },
                   { value: 2, label: '2x (Super HD)' },
@@ -411,7 +409,7 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       settings.upscale === u.value
                         ? 'bg-sky-500 text-white shadow-md'
-                        : 'text-slate-400 hover:text-white'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     {u.label}
@@ -425,11 +423,11 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
               {/* Sharpen / Deblur */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <ZoomIn className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                     <span>De-blur / Ketajaman:</span>
                   </span>
-                  <span className="font-mono text-sky-400 font-bold">{settings.sharpen}%</span>
+                  <span className="font-mono text-sky-600 dark:text-sky-400 font-bold">{settings.sharpen}%</span>
                 </div>
                 <input
                   type="range"
@@ -437,18 +435,18 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="100"
                   value={settings.sharpen}
                   onChange={(e) => setSettings({ ...settings, sharpen: Number(e.target.value) })}
-                  className="w-full accent-sky-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-sky-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
 
               {/* Denoise */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Eye className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                     <span>Denoise (Bintik Noise):</span>
                   </span>
-                  <span className="font-mono text-emerald-400 font-bold">{settings.denoise}%</span>
+                  <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{settings.denoise}%</span>
                 </div>
                 <input
                   type="range"
@@ -456,18 +454,18 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="100"
                   value={settings.denoise}
                   onChange={(e) => setSettings({ ...settings, denoise: Number(e.target.value) })}
-                  className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
 
               {/* Contrast */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Contrast className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Contrast className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                     <span>Kontras Visual:</span>
                   </span>
-                  <span className="font-mono text-amber-400 font-bold">
+                  <span className="font-mono text-amber-600 dark:text-amber-400 font-bold">
                     {settings.contrast > 0 ? `+${settings.contrast}` : settings.contrast}
                   </span>
                 </div>
@@ -477,18 +475,18 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="50"
                   value={settings.contrast}
                   onChange={(e) => setSettings({ ...settings, contrast: Number(e.target.value) })}
-                  className="w-full accent-amber-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
 
               {/* Brightness */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Sun className="w-3.5 h-3.5 text-yellow-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Sun className="w-3.5 h-3.5 text-yellow-500 dark:text-yellow-400" />
                     <span>Kecerahan / Exposure:</span>
                   </span>
-                  <span className="font-mono text-yellow-400 font-bold">
+                  <span className="font-mono text-yellow-600 dark:text-yellow-400 font-bold">
                     {settings.brightness > 0 ? `+${settings.brightness}` : settings.brightness}
                   </span>
                 </div>
@@ -498,18 +496,18 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="50"
                   value={settings.brightness}
                   onChange={(e) => setSettings({ ...settings, brightness: Number(e.target.value) })}
-                  className="w-full accent-yellow-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-yellow-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
 
               {/* Saturation */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Palette className="w-3.5 h-3.5 text-fuchsia-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Palette className="w-3.5 h-3.5 text-fuchsia-500 dark:text-fuchsia-400" />
                     <span>Saturasi Warna:</span>
                   </span>
-                  <span className="font-mono text-fuchsia-400 font-bold">
+                  <span className="font-mono text-fuchsia-600 dark:text-fuchsia-400 font-bold">
                     {settings.saturation > 0 ? `+${settings.saturation}` : settings.saturation}
                   </span>
                 </div>
@@ -519,18 +517,18 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="50"
                   value={settings.saturation}
                   onChange={(e) => setSettings({ ...settings, saturation: Number(e.target.value) })}
-                  className="w-full accent-fuchsia-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-fuchsia-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
 
               {/* Temperature */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Thermometer className="w-3.5 h-3.5 text-rose-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Thermometer className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
                     <span>Suhu (Hangat / Dingin):</span>
                   </span>
-                  <span className="font-mono text-rose-400 font-bold">
+                  <span className="font-mono text-rose-600 dark:text-rose-400 font-bold">
                     {settings.temperature > 0 ? `+${settings.temperature}` : settings.temperature}
                   </span>
                 </div>
@@ -540,22 +538,22 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                   max="50"
                   value={settings.temperature}
                   onChange={(e) => setSettings({ ...settings, temperature: Number(e.target.value) })}
-                  className="w-full accent-rose-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="w-full accent-rose-500 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg"
                 />
               </div>
             </div>
           </div>
 
           {/* Action Row */}
-          <div className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 border-emerald-500/20 bg-gradient-to-b from-[#121815]/80 to-[#101217]/80">
+          <div className="glass-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 border-emerald-500/30 bg-gradient-to-b from-emerald-50/50 to-white/90 dark:from-[#121815]/80 dark:to-[#101217]/80">
             <div className="flex items-center gap-2.5 w-full sm:w-auto">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h5 className="font-bold text-white text-xs sm:text-sm">Restorasi Siap Diunduh</h5>
-                <p className="text-[11px] text-slate-400">
-                  Resolusi luaran: <strong className="text-slate-200">{restoredWidth}×{restoredHeight} px</strong>
+                <h5 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">Restorasi Siap Diunduh</h5>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Resolusi luaran: <strong className="text-slate-800 dark:text-slate-200">{restoredWidth}×{restoredHeight} px</strong>
                   {restoredBlob && ` • ${formatBytes(restoredBlob.size)}`}
                 </p>
               </div>
@@ -578,9 +576,9 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
                     });
                     onTransferToCompressor(restoredFile);
                   }}
-                  className="w-full sm:w-auto px-4 py-3 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/15 text-slate-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl text-xs font-semibold bg-slate-200/80 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <FileImage className="w-4 h-4 text-sky-400" />
+                  <FileImage className="w-4 h-4 text-sky-500 dark:text-sky-400" />
                   <span>Kompres Hasil Ini</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>

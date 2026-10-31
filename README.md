@@ -141,3 +141,12 @@ Hasil kompilasi siap saji akan dibuat di dalam folder **`dist/`**.
 * **Arsip ZIP**: `JSZip` (v3.10.1)
 * **Ikonografi**: `lucide-react`
 * **Bundler & Build Tool**: Vite 5
+
+---
+
+## 📌 Repositori Resmi & Lisensi
+
+- **Repositori GitHub**: [https://github.com/01dell18-gif/app-kompres.git](https://github.com/01dell18-gif/app-kompres.git)
+- **Pengembang / Channel**: **FJY Channel**
+- **Privasi**: 100% Client-Side Processing (0 KB Egress / Tidak ada data yang diunggah ke internet).
+

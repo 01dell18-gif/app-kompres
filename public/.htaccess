@@ -2,9 +2,10 @@
 # Apache / cPanel / LiteSpeed Configuration for FJY Channel Kompres SPA
 # ==============================================================================
 
+DirectoryIndex index.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  Options -MultiViews
 
   # Serve existing files or directories directly
   RewriteCond %{REQUEST_FILENAME} -f [OR]

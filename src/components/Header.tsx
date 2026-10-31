@@ -14,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, onToggleTheme }) => {
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div className="relative flex-shrink-0">
             <img
-              src="/logo.png"
+              src="./logo.png"
               alt="FJY Channel Logo"
               className="w-9 h-9 sm:w-11 sm:h-11 object-contain rounded-full shadow-lg shadow-sky-500/15 border border-black/10 dark:border-white/10 p-0.5 bg-slate-100 dark:bg-[#0d0d14]"
             />

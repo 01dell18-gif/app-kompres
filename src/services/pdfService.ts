@@ -2,9 +2,12 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocument } from 'pdf-lib';
 import { PdfCompressOptions } from '../types';
 
-// Configure local worker to guarantee 100% offline support
+// Configure local worker to guarantee 100% offline support and domain portability (root or subpath)
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdf.worker.min.js',
+    document.baseURI || window.location.href
+  ).href;
 }
 
 /**

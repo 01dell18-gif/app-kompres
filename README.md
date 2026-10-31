@@ -72,31 +72,63 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+## 🚀 Cara Menjalankan Proyek di Komputer Lokal
 
-### Cara Paling Praktis (Khusus Pengguna Windows)
+### Cara Praktis & Otomatis (Cukup Klik Ganda):
+Cukup **klik ganda (double-click)** pada salah satu berkas launcher berikut:
+👉 **`start.bat`** (atau **`jalankan.bat`**)
 
-Cukup **klik ganda (double-click)** pada berkas:
-👉 **`jalankan.bat`** (atau **`start.bat`**)
-
-Skrip ini akan secara otomatis:
-
-1. Memeriksa keberadaan Node.js di komputer.
-2. Memasang dependensi (`npm install`) secara otomatis jika belum ada.
-3. Menjalankan server aplikasi lokal dengan mode `--host` (dapat diakses juga dari perangkat lain/HP dalam satu jaringan Wi-Fi).
-4. Membuka peramban secara otomatis ke alamat `http://localhost:5173/`.
+Skrip cerdas ini dirancang khusus untuk mendeteksi perangkat baru secara otomatis:
+1. **Pemeriksaan Runtime Node.js**: Mengecek apakah Node.js sudah terpasang. Jika belum ada di komputer baru, skrip akan memberikan tautan resmi dan menawarkan untuk membuka halaman unduh Node.js secara otomatis.
+2. **Pemasangan Pustaka Otomatis**: Jika folder `node_modules` belum ada, skrip akan langsung menjalankan `npm install` hingga tuntas tanpa perlu mengetik perintah terminal.
+3. **Membuka Peramban Seketika**: Membuka browser bawaan ke alamat `http://localhost:5173/`.
+4. **Dukungan Jaringan / Mode HP**: Menjalankan server lokal dengan opsi `--host` sehingga aplikasi juga dapat dibuka langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
 
 ---
 
-### Cara Manual via Terminal / Command Prompt
-
+### Cara Manual via Terminal / Command Prompt:
 ```bash
 # 1. Pasang dependensi jika baru mengunduh proyek
 cmd /c npm install
 
 # 2. Jalankan mode pengembangan
-cmd /c npm run dev
+cmd /c npm run dev -- --host
 ```
+
+---
+
+## 🌐 Panduan Mengunggah ke Hosting / Domain Pribadi
+
+Aplikasi ini telah dirancang dengan arsitektur **Relative Base (`base: './'`)** dan **Zero Egress**, sehingga dapat diunggah ke domain apa pun, baik domain utama (`https://domainanda.com`), subdomain (`https://alat.domainanda.com`), maupun sub-direktori folder (`https://domainanda.com/app-kompres/`).
+
+### 1. Kompilasi Berkas Produksi
+Jalankan perintah build di terminal:
+```bash
+cmd /c npm run build
+```
+Hasil kompilasi siap saji akan dibuat di dalam folder **`dist/`**.
+
+### 2. Opsi Pengunggahan ke Berbagai Layanan Hosting:
+
+* **cPanel / DirectAdmin / Shared Hosting (Apache / LiteSpeed)**:
+  * Unggah seluruh isi file dan folder yang ada di dalam direktori `dist/` ke direktori `public_html/` (atau folder sub-direktori pilihan Anda).
+  * Berkas `.htaccess` sudah disediakan secara otomatis di dalam `dist/` untuk menangani routing SPA, MIME types modern (`.js`, `.wasm`, `.webp`), dan kompresi Gzip.
+
+* **Vercel**:
+  * Hubungkan repositori GitHub Anda ke dashboard Vercel.
+  * Berkas konfigurasi `vercel.json` sudah tersedia di repositori sehingga deployment langsung berjalan otomatis (*1-Click Deploy*).
+
+* **Netlify**:
+  * Hubungkan repositori GitHub ke Netlify atau seret folder `dist/` ke Netlify Drop.
+  * Berkas konfigurasi `netlify.toml` sudah tersedia dengan aturan redirect SPA otomatis.
+
+* **Nginx (VPS / Cloud Server)**:
+  * Arahkan direktori root Nginx ke folder `dist` dan tambahkan blok routing SPA:
+  ```nginx
+  location / {
+      try_files $uri $uri/ /index.html;
+  }
+  ```
 
 ---
 

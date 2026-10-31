@@ -1,54 +1,98 @@
 @echo off
-title FJY Channel Kompres - PDF & Foto Lokal
+setlocal enabledelayedexpansion
+title FJY Channel Kompres - Sistem Pemrosesan Berkas Lokal
 color 0B
 cls
 
-echo ========================================================
-echo        FJY CHANNEL KOMPRES - 100%% CLIENT-SIDE
-echo   Kompres PDF, Gabung PDF, dan Kompres Citra Massal
-echo ========================================================
+:: Pindah ke direktori tempat berkas script berada
+cd /d "%~dp0"
+
+echo ========================================================================
+echo                   FJY CHANNEL KOMPRES (100%% LOKAL)
+echo     Kompres PDF ^| Gabung PDF ^| Kompres Foto Massal ^| Restorasi Foto
+echo ========================================================================
 echo.
 
-:: 1. Periksa apakah Node.js terpasang
+:: --------------------------------------------------------------------------
+:: 1. Pemeriksaan Node.js & NPM pada perangkat baru
+:: --------------------------------------------------------------------------
+echo [1/3] Memeriksa ketersediaan aplikasi dan komponen sistem...
+
 where node >nul 2>nul
 if %errorlevel% neq 0 (
-    echo [ERROR] Node.js belum terpasang di komputer ini!
-    echo Silakan unduh dan pasang Node.js terlebih dahulu dari:
-    echo https://nodejs.org/
     echo.
+    echo ========================================================================
+    echo [PERINGATAN] Node.js belum terpasang di perangkat ini!
+    echo.
+    echo Aplikasi web lokal ini membutuhkan runtime Node.js (versi LTS direkomendasikan).
+    echo Anda dapat mengunduhnya secara gratis di situs resmi:
+    echo   https://nodejs.org/
+    echo ========================================================================
+    echo.
+    set /p "BukaWeb=Apakah Anda ingin membuka halaman unduh Node.js sekarang? (Y/T): "
+    if /i "!BukaWeb!"=="Y" (
+        start "" https://nodejs.org/
+    )
+    echo.
+    echo Silakan pasang Node.js, lalu jalankan kembali berkas ini.
     echo Tekan tombol apa saja untuk keluar...
     pause >nul
     exit /b 1
 )
 
-echo [1/3] Node.js terdeteksi:
-node -v
+for /f "tokens=*" %%v in ('node -v') do set "NODE_VER=%%v"
+for /f "tokens=*" %%v in ('call npm -v 2^>nul') do set "NPM_VER=%%v"
+
+echo   [OK] Node.js terdeteksi : !NODE_VER!
+echo   [OK] NPM terdeteksi     : !NPM_VER!
 echo.
 
-:: 2. Periksa dependensi node_modules
-if not exist "node_modules\" (
-    echo [2/3] Mengunduh & memasang dependensi proyek (npm install)...
-    echo Mohon tunggu sebentar, proses ini hanya berjalan sekali...
+:: --------------------------------------------------------------------------
+:: 2. Pemeriksaan dan Pemasangan Pustaka / Dependensi Aplikasi
+:: --------------------------------------------------------------------------
+echo [2/3] Memeriksa pustaka aplikasi (node_modules)...
+
+if not exist "node_modules\vite\bin\vite.js" (
+    echo.
+    echo [INFO] Perangkat baru terdeteksi: Pustaka aplikasi belum lengkap.
+    echo [INFO] Sedang memasang seluruh dependensi yang diperlukan (npm install)...
+    echo        Proses ini hanya berlangsung satu kali saat awal. Mohon tunggu...
+    echo.
     call npm install
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo.
-        echo [ERROR] Gagal memasang dependensi npm!
+        echo [ERROR] Pemasangan dependensi gagal!
+        echo Pastikan komputer terhubung ke internet saat pemasangan awal pustaka.
+        echo.
         pause
         exit /b 1
     )
+    echo.
+    echo [OK] Pustaka aplikasi berhasil dipasang dengan lengkap.
 ) else (
-    echo [2/3] Dependensi node_modules sudah terpasang.
+    echo   [OK] Seluruh pustaka aplikasi sudah terpasang dan siap digunakan.
 )
 echo.
 
-:: 3. Jalankan server lokal dan buka browser otomatis
-echo [3/3] Menjalankan server aplikasi lokal...
-echo Aplikasi dapat diakses langsung pada browser Anda.
-echo Tekan Ctrl+C pada jendela terminal ini jika ingin menghentikan aplikasi.
+:: --------------------------------------------------------------------------
+:: 3. Menjalankan Server Lokal & Membuka di Peramban
+:: --------------------------------------------------------------------------
+echo [3/3] Menjalankan server aplikasi web lokal...
+echo.
+echo ========================================================================
+echo   Aplikasi Web FJY Channel Kompres siap digunakan!
+echo.
+echo   * URL Komputer Lokal : http://localhost:5173/
+echo   * URL Perangkat HP   : Lihat IP Network yang ditampilkan di bawah
+echo.
+echo   [TIPS] Tekan Ctrl + C pada jendela ini jika ingin menghentikan web.
+echo ========================================================================
 echo.
 
-:: Jalankan browser otomatis ke localhost:5173
+:: Buka browser secara otomatis
 start "" http://localhost:5173/
 
-:: Jalankan Vite dengan host terbuka agar bisa diakses HP/perangkat lain di Wi-Fi yang sama
+:: Jalankan server Vite dengan mode host terbuka untuk akses jaringan lokal/HP
 call npm run dev -- --host
+
+pause

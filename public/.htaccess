@@ -1,0 +1,41 @@
+# ==============================================================================
+# Apache / cPanel / LiteSpeed Configuration for FJY Channel Kompres SPA
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Serve existing files or directories directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Fallback all other routes to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Correct MIME Types
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType image/webp .webp
+  AddType image/png .png
+  AddType image/jpeg .jpg .jpeg
+  AddType application/wasm .wasm
+  AddType application/json .json
+  AddType font/woff2 .woff2
+</IfModule>
+
+# Gzip / Brotli compression for high performance
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript application/json application/wasm
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

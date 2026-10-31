@@ -1,14 +1,17 @@
-const CACHE_NAME = 'app-kompres-cache-v1';
+const CACHE_NAME = 'fjy-kompres-cache-v1';
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/pdf.worker.min.js'
+  './',
+  './index.html',
+  './pdf.worker.min.js',
+  './logo.png'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_URLS);
+      return cache.addAll(PRECACHE_URLS).catch((err) => {
+        console.warn('Precache partial fallback:', err);
+      });
     }).then(() => self.skipWaiting())
   );
 });
@@ -48,7 +51,7 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // Offline fallback
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('./index.html') || caches.match('./');
         }
       });
     })

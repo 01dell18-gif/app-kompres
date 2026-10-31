@@ -13,9 +13,9 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ### 1. 📄 Modul Kompres PDF (Adaptasi & Peningkatan dari TepiLayar)
 * **100% Client-Side Processing**: Memanfaatkan kombinasi `pdfjs-dist` dan `pdf-lib` langsung di memori browser.
 * **Preset Kompresi Praktis**:
-  * **Ekstrem / Maksimum**: Resolusi ~72 DPI, ideal untuk syarat ketat portal pendaftaran (<200 KB atau <500 KB).
-  * **Seimbang (Rekomendasi)**: Resolusi ~150 DPI, teks tetap tajam dengan penghematan 50%–80%.
-  * **Ringan / Kualitas Cetak**: Resolusi ~300 DPI, mempertahankan detail cetak tinggi.
+  * **Ekstrem / Maksimum**: Resolusi ~97 DPI, ideal untuk syarat ketat portal pendaftaran (<200 KB atau <500 KB). Teks pindaian KTP & ijazah tetap terbaca jelas.
+  * **Seimbang (Rekomendasi)**: Resolusi ~126 DPI, teks stempel & angka sangat tajam dengan penghematan 50%–75%.
+  * **Ringan / Kualitas Cetak**: Resolusi ~158 DPI studio, mempertahankan detail halus, siap dicetak fisik tanpa blur.
 * **Target Batas Ukuran Otomatis**: Mendukung target batas instansi resmi (`< 200 KB`, `< 500 KB`, `< 1000 KB`).
 * **Mode Skala Abu-Abu (Grayscale)**: Menghapus kanal warna untuk memangkas ukuran dokumen pindaian/ijazah berwarna hingga 40% tambahan.
 * **Before / After Split-View Inspector**: Membandingkan ketajaman visual sebelum dan sesudah kompresi dengan slider interaktif.

@@ -11,8 +11,8 @@
 
 /* Dark mode theme variables & styles */
 html.dark body {
-  background-color: #060608;
-  color: #f1f5f9;
+  background-color: #060608 !important;
+  color: #f1f5f9 !important;
 }
 
 html.dark .bg-radial-glow {
@@ -37,8 +37,8 @@ html.dark .glass-card-hover:hover {
 /* Light mode theme variables & styles */
 html.light body,
 html:not(.dark) body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
 }
 
 html.light .bg-radial-glow,

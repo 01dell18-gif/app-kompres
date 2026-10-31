@@ -28,6 +28,11 @@ export const App: React.FC = () => {
       root.classList.remove('dark');
     }
     localStorage.setItem('fjy_theme', theme);
+
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme === 'dark' ? '#060608' : '#f8fafc');
+    }
   }, [theme]);
 
   const toggleTheme = () => {

@@ -52,13 +52,19 @@ export const Header: React.FC<HeaderProps> = ({ theme, onToggleTheme }) => {
           <button
             onClick={onToggleTheme}
             aria-label="Ganti Tema Terang/Gelap"
-            title={theme === 'dark' ? 'Ubah ke Tema Terang' : 'Ubah ke Tema Gelap'}
-            className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 transition-all active:scale-95 flex items-center justify-center"
+            title={theme === 'dark' ? 'Ubah ke Mode Terang' : 'Ubah ke Mode Gelap'}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 transition-all active:scale-95 shadow-sm"
           >
             {theme === 'dark' ? (
-              <Sun className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-amber-400 animate-pulse-subtle" />
+              <>
+                <Sun className="w-4 h-4 text-amber-400 animate-pulse-subtle flex-shrink-0" />
+                <span className="hidden sm:inline font-semibold text-xs text-amber-400">Terang</span>
+              </>
             ) : (
-              <Moon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-sky-600" />
+              <>
+                <Moon className="w-4 h-4 text-sky-600 flex-shrink-0" />
+                <span className="hidden sm:inline font-semibold text-xs text-sky-700">Gelap</span>
+              </>
             )}
           </button>
         </div>

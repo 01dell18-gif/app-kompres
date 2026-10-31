@@ -11,6 +11,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ## 🌟 4 Modul Unggulan
 
 ### 1. 📄 Modul Kompres PDF (Adaptasi & Peningkatan dari TepiLayar)
+
 * **100% Client-Side Processing**: Memanfaatkan kombinasi `pdfjs-dist` dan `pdf-lib` langsung di memori browser.
 * **Preset Kompresi Praktis**:
   * **Ekstrem / Maksimum**: Resolusi ~97 DPI, ideal untuk syarat ketat portal pendaftaran (<200 KB atau <500 KB). Teks pindaian KTP & ijazah tetap terbaca jelas.
@@ -24,6 +25,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ---
 
 ### 2. 📑 Modul Gabung PDF (PDF Merger)
+
 * **Multi-Berkas Instan**: Menggabungkan 2 atau lebih berkas PDF menjadi 1 file terpadu secara langsung dalam memori biner.
 * **Pratinjau Sampul Visual**: Merender thumbnail halaman pertama setiap dokumen secara otomatis.
 * **Penataan Urutan Fleksibel**: Tombol navigasi urutan naik/turun (`Move Up` / `Move Down`) responsif di desktop & ponsel.
@@ -33,6 +35,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ---
 
 ### 3. 🖼️ Modul Kompres Citra Massal (Batch Image Compressor)
+
 * **Akselerasi Multi-Utas**: Memanfaatkan konkurensi hardware peramban (`navigator.hardwareConcurrency - 1`) untuk memproses puluhan foto secara paralel tanpa membekukan UI.
 * **Fleksibilitas Format Luaran**: WebP (modern & hemat kapasitas), JPEG (standar pendaftaran resmi CASN/BUMN), dan PNG (lossless).
 * **Pembatasan Dimensi (Dimension Clamping)**: Pilihan resolusi Full HD (1920px), HD (1280px), atau Pasfoto (800px).
@@ -42,6 +45,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ---
 
 ### 4. ✨ Modul Restorasi Foto (Image Enhancement & Super Resolution)
+
 * **Image Enhancement**: Peningkatan visual otomatis untuk ketajaman, kontras, saturasi, dan pencahayaan (Auto-Enhance).
 * **AI Image Upscaler / Super Resolution**: Pembesaran resolusi 2x dan 4x dengan sintesis detail tepi agar gambar tidak pecah saat dicetak.
 * **De-blur / Menjernihkan Foto Buram**: Filter unsharp masking untuk memulihkan detail tepi dan teks buram akibat pergerakan kamera.
@@ -53,6 +57,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ---
 
 ### 5. 🌓 Fitur Tema Terang & Gelap (Light / Dark Mode) & Mode Ponsel
+
 * **Pilihan Tema Fleksibel**: Tombol toggle instan (Matahari / Bulan) di bilah navigasi atas untuk berpindah antara tampilan tema Gelap (*Dark Mode*) dan Terang (*Light Mode*).
 * **Penyimpanan Preferensi Lokal**: Pilihan tema pengguna disimpan di `localStorage` peramban sehingga otomatis aktif saat aplikasi dibuka kembali.
 * **100% Responsif & Mobile-Friendly**: Antarmuka dioptimalkan secara mendalam untuk perangkat Android, iOS, tablet, maupun layar desktop, dengan tombol sentuh berukuran proporsional, grid adaptif 2x2, dan geseran sentuh (*touch gestures*).
@@ -60,6 +65,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ---
 
 ## 🔒 Privasi & Keamanan Data (Zero Egress)
+
 * **Nol Upload Peladen (0 KB)**: Dokumen sensitif seperti KTP, Kartu Keluarga, SKCK, Transkrip Nilai, dan Ijazah **tidak pernah meninggalkan perangkat Anda**.
 * **Manajemen Memori Bersih**: Objek URL Blob dibersihkan secara sistematis melalui `URL.revokeObjectURL()` guna mencegah kebocoran RAM.
 * **Dukungan Luring Penuh (Offline Ready)**: Memuat worker PDF lokal (`/pdf.worker.min.js`) dan Service Worker cache sehingga aplikasi tetap dapat digunakan tanpa koneksi internet.
@@ -68,11 +74,13 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 
 ## 🚀 Cara Menjalankan Proyek
 
-### Cara Paling Praktis (Khusus Pengguna Windows):
+### Cara Paling Praktis (Khusus Pengguna Windows)
+
 Cukup **klik ganda (double-click)** pada berkas:
 👉 **`jalankan.bat`** (atau **`start.bat`**)
 
 Skrip ini akan secara otomatis:
+
 1. Memeriksa keberadaan Node.js di komputer.
 2. Memasang dependensi (`npm install`) secara otomatis jika belum ada.
 3. Menjalankan server aplikasi lokal dengan mode `--host` (dapat diakses juga dari perangkat lain/HP dalam satu jaringan Wi-Fi).
@@ -80,7 +88,8 @@ Skrip ini akan secara otomatis:
 
 ---
 
-### Cara Manual via Terminal / Command Prompt:
+### Cara Manual via Terminal / Command Prompt
+
 ```bash
 # 1. Pasang dependensi jika baru mengunduh proyek
 cmd /c npm install
@@ -92,6 +101,7 @@ cmd /c npm run dev
 ---
 
 ## 🛠️ Arsitektur Teknologi
+
 * **Frontend**: React 18, TypeScript, Tailwind CSS
 * **Manipulasi Dokumen PDF**: `pdf-lib` (v1.17.1)
 * **Rendering & Rasterisasi Halaman**: `pdfjs-dist` (v3.11.174) dengan worker lokal mandiri

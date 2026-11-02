@@ -51,9 +51,7 @@ echo.
 set "INSTALLER_MSI="
 if exist "installers\node-v24.22.2-x64.msi" set "INSTALLER_MSI=installers\node-v24.22.2-x64.msi"
 
-if not defined INSTALLER_MSI (
-    for %%f in ("installers\node*.msi") do set "INSTALLER_MSI=%%~ff"
-)
+if not defined INSTALLER_MSI for %%f in ("installers\node*.msi") do set "INSTALLER_MSI=%%~ff"
 
 if defined INSTALLER_MSI goto :run_installer
 
@@ -139,9 +137,7 @@ node server.js
 goto :server_end
 
 :server_end
-if errorlevel 1 (
-    echo.
-    echo Server dihentikan.
-)
+echo.
+echo Server selesai atau ditutup.
 pause
 exit /b 0

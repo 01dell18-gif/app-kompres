@@ -141,8 +141,8 @@ echo.
 :: Bersihkan proses lama di port 5173 jika ada
 for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":5173 " ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>nul
 
-:: Buka browser secara otomatis ke localhost:5173
-start "" http://localhost:5173/
+:: Buka browser secara otomatis ke localhost:5173 dengan cache-buster agar selalu memuat versi terbaru
+start "" "http://localhost:5173/?v=!RANDOM!"
 
 :: Prioritaskan server.js jika tersedia
 if exist "server.js" goto :run_server_js

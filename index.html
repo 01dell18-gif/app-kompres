@@ -24,6 +24,18 @@
             document.documentElement.classList.remove('dark');
           }
         } catch (e) {}
+
+        // Otomatis unregister service worker & bersihkan cache peramban agar selalu memuat versi terbaru
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(function(names) {
+            for (var j = 0; j < names.length; j++) { caches.delete(names[j]); }
+          });
+        }
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

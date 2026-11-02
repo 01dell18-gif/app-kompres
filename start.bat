@@ -22,6 +22,16 @@ echo [1/3] Memeriksa ketersediaan aplikasi dan komponen sistem...
 where node >nul 2>nul
 if not errorlevel 1 goto :node_ready
 
+:: Cek apakah portable node.exe ada di folder installers atau installer
+if exist "%~dp0installers\node.exe" (
+    set "PATH=%~dp0installers;!PATH!"
+    goto :node_ready
+)
+if exist "%~dp0installer\node.exe" (
+    set "PATH=%~dp0installer;!PATH!"
+    goto :node_ready
+)
+
 :: Cek apakah Node.js terpasang di lokasi standar Windows
 if exist "C:\Program Files\nodejs\node.exe" goto :found_pf
 if exist "C:\Program Files (x86)\nodejs\node.exe" goto :found_pfx86
@@ -44,20 +54,24 @@ goto :node_ready
 echo.
 echo ========================================================================
 echo [INFO] Perangkat baru terdeteksi: Node.js belum terpasang di sistem.
-echo [INFO] Memasang Node.js secara otomatis dari folder installers...
+echo [INFO] Memeriksa installer di folder installers / installer...
 echo ========================================================================
 echo.
 
 set "INSTALLER_MSI="
 if exist "installers\node-v24.22.2-x64.msi" set "INSTALLER_MSI=installers\node-v24.22.2-x64.msi"
+if exist "installer\node-v24.22.2-x64.msi" set "INSTALLER_MSI=installer\node-v24.22.2-x64.msi"
 
 if not defined INSTALLER_MSI for %%f in ("installers\node*.msi") do set "INSTALLER_MSI=%%~ff"
+if not defined INSTALLER_MSI for %%f in ("installer\node*.msi") do set "INSTALLER_MSI=%%~ff"
+if not defined INSTALLER_MSI for %%f in ("installers\*.msi") do set "INSTALLER_MSI=%%~ff"
+if not defined INSTALLER_MSI for %%f in ("installer\*.msi") do set "INSTALLER_MSI=%%~ff"
 
 if defined INSTALLER_MSI goto :run_installer
 
-echo [INFO] Mengunduh berkas installer Node.js ke folder installers...
+echo [INFO] Mengunduh berkas installer resmi Node.js ke folder installers...
 if not exist "installers" mkdir "installers"
-powershell -Command "Invoke-WebRequest -Uri 'https://nodejs.org/dist/v24.22.2/node-v24.22.2-x64.msi' -OutFile 'installers\node-v24.22.2-x64.msi'"
+powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v24.22.2/node-v24.22.2-x64.msi' -OutFile 'installers\node-v24.22.2-x64.msi'"
 set "INSTALLER_MSI=installers\node-v24.22.2-x64.msi"
 
 :run_installer

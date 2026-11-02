@@ -293,7 +293,9 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
                 <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-xl p-3 sm:p-4">
                   <span className="text-[10px] sm:text-[11px] font-medium text-emerald-700 dark:text-emerald-400 block mb-1">Total Penghematan</span>
                   <span className="text-sm sm:text-lg font-bold text-emerald-600 dark:text-emerald-300 font-mono">
-                    Hemat {savings.percentage}% ({formatBytes(savings.savedBytes)})
+                    {savings.percentage > 0
+                      ? `Hemat ${savings.percentage}% (${formatBytes(savings.savedBytes)})`
+                      : 'Ukuran Sudah Optimal'}
                   </span>
                 </div>
               </div>

@@ -10,8 +10,8 @@ lerna-debug.log*
 # Dependencies
 node_modules/
 
-# Production build
-dist/
+# Production build (tracked for instant 100% offline deployment on any PC / domain)
+# dist/
 dist-ssr/
 
 # Local env files

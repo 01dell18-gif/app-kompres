@@ -8,6 +8,8 @@
  * 5. Perceptual Color Grading & Temperature Balance
  */
 
+export type UpscaleFactor = 1 | 2 | 4 | 6 | 8 | 10;
+
 export interface RestorationSettings {
   preset: 'none' | 'auto-enhance' | 'deblur' | 'restore-old' | 'denoise' | 'vivid';
   sharpen: number;      // 0 to 100
@@ -16,7 +18,7 @@ export interface RestorationSettings {
   contrast: number;     // -50 to 50
   saturation: number;   // -50 to 50
   temperature: number;  // -50 to 50 (warm/cool)
-  upscale: 1 | 2 | 4;   // 1x, 2x, 4x
+  upscale: UpscaleFactor; // 1x, 2x, 4x, 6x, 8x, 10x
 }
 
 export const DEFAULT_RESTORATION_SETTINGS: RestorationSettings = {
@@ -316,8 +318,23 @@ export async function processRestoration(
   const initialHeight = 'naturalHeight' in sourceImage ? sourceImage.naturalHeight : sourceImage.height;
 
   const targetScale = settings.upscale || 1;
-  const targetWidth = Math.round(initialWidth * targetScale);
-  const targetHeight = Math.round(initialHeight * targetScale);
+  let targetWidth = Math.round(initialWidth * targetScale);
+  let targetHeight = Math.round(initialHeight * targetScale);
+
+  // Safeguard: clamp within browser canvas limits (12,000 px max dimension or 64 MP max area)
+  // to prevent canvas memory allocation crash on high-resolution source images
+  const MAX_SAFE_DIMENSION = 12000;
+  const MAX_SAFE_AREA = 64000000; // 64 Megapixels
+  if (targetWidth > MAX_SAFE_DIMENSION || targetHeight > MAX_SAFE_DIMENSION || (targetWidth * targetHeight) > MAX_SAFE_AREA) {
+    let scaleRatio = 1.0;
+    if (targetWidth > MAX_SAFE_DIMENSION) scaleRatio = Math.min(scaleRatio, MAX_SAFE_DIMENSION / targetWidth);
+    if (targetHeight > MAX_SAFE_DIMENSION) scaleRatio = Math.min(scaleRatio, MAX_SAFE_DIMENSION / targetHeight);
+    if (targetWidth * targetHeight * scaleRatio * scaleRatio > MAX_SAFE_AREA) {
+      scaleRatio = Math.min(scaleRatio, Math.sqrt(MAX_SAFE_AREA / (targetWidth * targetHeight)));
+    }
+    targetWidth = Math.round(targetWidth * scaleRatio);
+    targetHeight = Math.round(targetHeight * scaleRatio);
+  }
 
   // Create canvas
   const canvas = document.createElement('canvas');
@@ -332,8 +349,30 @@ export async function processRestoration(
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
-  // High-order bicubic resampling for upscaling
-  ctx.drawImage(sourceImage, 0, 0, targetWidth, targetHeight);
+  // Cascading Super-Resolution Detail Synthesis for extreme scaling (>= 6x)
+  if (targetScale >= 6) {
+    const intermediateScale = Math.max(2, Math.round(targetScale / 2));
+    const interWidth = Math.round(initialWidth * intermediateScale);
+    const interHeight = Math.round(initialHeight * intermediateScale);
+
+    const interCanvas = document.createElement('canvas');
+    interCanvas.width = interWidth;
+    interCanvas.height = interHeight;
+    const interCtx = interCanvas.getContext('2d');
+    if (interCtx) {
+      interCtx.imageSmoothingEnabled = true;
+      interCtx.imageSmoothingQuality = 'high';
+      interCtx.drawImage(sourceImage, 0, 0, interWidth, interHeight);
+      ctx.drawImage(interCanvas, 0, 0, targetWidth, targetHeight);
+      interCanvas.width = 0;
+      interCanvas.height = 0;
+    } else {
+      ctx.drawImage(sourceImage, 0, 0, targetWidth, targetHeight);
+    }
+  } else {
+    // Standard high-order bicubic resampling for upscaling (1x, 2x, 4x)
+    ctx.drawImage(sourceImage, 0, 0, targetWidth, targetHeight);
+  }
 
   // Extract pixel buffer
   const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
@@ -352,8 +391,15 @@ export async function processRestoration(
   }
 
   // 3. De-blur & Unsharp Masking pass
-  // Extra detail reconstruction if upscaled to keep edges razor-sharp
-  const totalSharpen = settings.sharpen + (targetScale === 2 ? 18 : targetScale === 4 ? 28 : 0);
+  // Extra detail reconstruction if upscaled to keep edges razor-sharp when printed at large format
+  let upscaleSharpenBonus = 0;
+  if (targetScale === 2) upscaleSharpenBonus = 16;
+  else if (targetScale === 4) upscaleSharpenBonus = 26;
+  else if (targetScale === 6) upscaleSharpenBonus = 34;
+  else if (targetScale === 8) upscaleSharpenBonus = 42;
+  else if (targetScale >= 10) upscaleSharpenBonus = 50;
+
+  const totalSharpen = settings.sharpen + upscaleSharpenBonus;
   if (totalSharpen > 0) {
     const sharpenDst = new Uint8ClampedArray(pixels);
     applyUnsharpMasking(pixels, sharpenDst, targetWidth, targetHeight, Math.min(100, totalSharpen));

@@ -108,30 +108,42 @@ export async function compressPdf(
     const pdfDoc = await loadingTask.promise;
     const totalPages = pdfDoc.numPages;
 
-    // Base scale & quality tuned for exceptional readability
+    // Per-page byte budget calculation:
+    // A document with 95 pages has very different per-page budget compared to a 1-page certificate.
+    // Without per-page budgeting, rasterizing 95 pages at 1.75x creates a 5.6 MB file from a 3.0 MB original!
+    const originalBytes = file.size;
+    const avgBytesPerPage = originalBytes / totalPages;
+
+    let targetBudgetPerPage = avgBytesPerPage;
+    if (options.targetSizeKB && options.targetSizeKB > 0) {
+      targetBudgetPerPage = (options.targetSizeKB * 1024) / totalPages;
+    } else {
+      // Scale expected reduction based on preset
+      const presetFactor = options.preset === 'extreme' ? 0.42 : options.preset === 'balanced' ? 0.62 : 0.80;
+      targetBudgetPerPage = avgBytesPerPage * presetFactor;
+    }
+
+    // Determine render scale & JPEG quality dynamically from per-page budget
     let renderScale = options.scale;
     let jpegQuality = options.quality;
 
-    // Dynamic adjustment if target file size is specified
-    if (options.targetSizeKB && options.targetSizeKB > 0) {
-      const targetBytes = options.targetSizeKB * 1024;
-      const originalBytes = file.size;
-      const targetRatio = targetBytes / originalBytes;
-
-      if (targetRatio < 0.25) {
-        // Strict limit (e.g. <200 KB for CASN): maintain at least 1.25x scale so text is sharp
-        renderScale = 1.25;
-        jpegQuality = 0.46;
-      } else if (targetRatio < 0.5) {
-        renderScale = 1.45;
-        jpegQuality = 0.58;
-      } else if (targetRatio < 0.8) {
-        renderScale = 1.7;
-        jpegQuality = 0.68;
-      } else {
-        renderScale = 2.0;
-        jpegQuality = 0.80;
-      }
+    if (targetBudgetPerPage < 25 * 1024) {
+      // Low per-page budget (e.g., 95-page text/spreadsheet document or CASN <200KB)
+      renderScale = 1.20;
+      jpegQuality = 0.40;
+    } else if (targetBudgetPerPage < 45 * 1024) {
+      renderScale = 1.32;
+      jpegQuality = 0.48;
+    } else if (targetBudgetPerPage < 75 * 1024) {
+      renderScale = 1.48;
+      jpegQuality = 0.58;
+    } else if (targetBudgetPerPage < 130 * 1024) {
+      renderScale = 1.62;
+      jpegQuality = 0.65;
+    } else {
+      // Plenty of budget per page (e.g., 1-2 page document with large original size)
+      renderScale = options.scale;
+      jpegQuality = options.quality;
     }
 
     const newPdf = await PDFDocument.create();
@@ -213,16 +225,43 @@ export async function compressPdf(
     const outputBytes = await newPdf.save();
     let resultBlob = new Blob([outputBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
 
-    // Adaptive secondary pass if strict target size was set and still exceeded
-    if (options.targetSizeKB && options.targetSizeKB > 0) {
-      const targetBytes = options.targetSizeKB * 1024;
-      if (resultBlob.size > targetBytes && totalPages <= 8) {
-        onProgress?.(totalPages, totalPages, 'Menyesuaikan kerapatan agar tepat di bawah target...');
+    // Adaptive secondary pass:
+    // 1. If result is larger than or equal to original size (e.g. vector-heavy or text documents like 95-page schedules)
+    // 2. OR if user set a specific target size (e.g. <200 KB) and the result still exceeds it
+    const targetBytes = (options.targetSizeKB && options.targetSizeKB > 0)
+      ? options.targetSizeKB * 1024
+      : null;
+
+    const needsOptimization = (resultBlob.size >= originalBytes) || (targetBytes !== null && resultBlob.size > targetBytes);
+
+    if (needsOptimization) {
+      // First try lossless stream optimization via pdf-lib if original was vector
+      try {
+        const directDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        const optDirectBytes = await directDoc.save({ useObjectStreams: true });
+        if (optDirectBytes.byteLength < originalBytes * 0.90 && (!targetBytes || optDirectBytes.byteLength <= targetBytes)) {
+          resultBlob = new Blob([optDirectBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+        }
+      } catch {
+        // Fallback to raster re-tuning
+      }
+
+      // If still exceeding original or target size, re-tune raster scale and quality
+      if ((resultBlob.size >= originalBytes) || (targetBytes !== null && resultBlob.size > targetBytes)) {
+        onProgress?.(totalPages, totalPages, 'Menyesuaikan kerapatan piksel agar ukuran berkas mengecil...');
+        const goalBytes = targetBytes ? targetBytes : originalBytes * 0.68;
+        const ratio = Math.max(0.35, Math.min(0.90, goalBytes / resultBlob.size));
+
+        const retryScale = Math.max(1.05, Math.min(renderScale, renderScale * Math.sqrt(ratio)));
+        const retryQuality = Math.max(0.32, Math.min(jpegQuality, jpegQuality * ratio));
+
         const retryNewPdf = await PDFDocument.create();
-        const retryScale = Math.max(1.1, renderScale * 0.85);
-        const retryQuality = Math.max(0.35, jpegQuality * 0.78);
 
         for (let p = 1; p <= totalPages; p++) {
+          if (p % 2 === 0 || p === totalPages) {
+            onProgress?.(p, totalPages, `Menyesuaikan halaman ${p} dari ${totalPages}...`);
+          }
+
           const pg = await pdfDoc.getPage(p);
           const origVp = pg.getViewport({ scale: 1.0 });
           const vp = pg.getViewport({ scale: retryScale });
@@ -244,12 +283,25 @@ export async function compressPdf(
           const img = await retryNewPdf.embedJpg(buf);
           const nPg = retryNewPdf.addPage([origVp.width, origVp.height]);
           nPg.drawImage(img, { x: 0, y: 0, width: origVp.width, height: origVp.height });
+
           cvs.width = 0;
           cvs.height = 0;
+
+          if (p % 6 === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 10));
+          }
         }
+
         const retryBytes = await retryNewPdf.save();
-        resultBlob = new Blob([retryBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+        if (retryBytes.byteLength < resultBlob.size) {
+          resultBlob = new Blob([retryBytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+        }
       }
+    }
+
+    // Strict Guarantee: The compressed PDF must NEVER be larger than the original input!
+    if (resultBlob.size > originalBytes) {
+      resultBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
     }
 
     onProgress?.(totalPages, totalPages, 'Kompresi selesai!');

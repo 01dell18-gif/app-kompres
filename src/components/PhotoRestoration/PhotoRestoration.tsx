@@ -225,7 +225,7 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
         <Dropzone
           accept="image/*"
           title="Pilih Foto untuk Direstorasi & Ditingkatkan"
-          subtitle="Tingkatkan ketajaman (de-blur), hilangkan noise, pulihkan foto pudar, dan perbesar resolusi (upscale 2x/4x) 100% lokal."
+          subtitle="Tingkatkan ketajaman (de-blur), hilangkan noise, pulihkan foto pudar, dan perbesar resolusi (upscale 2x hingga 10x Super Resolution) 100% lokal."
           icon={Wand2}
           badge="Restorasi & Super Resolution"
           onFilesSelected={handleFileSelected}
@@ -397,16 +397,19 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
               </div>
 
               {/* Upscale Radio Buttons */}
-              <div className="flex items-center gap-1.5 bg-slate-200/80 dark:bg-[#0e0e14] p-1 rounded-xl border border-slate-300 dark:border-white/10 w-full sm:w-auto justify-center">
+              <div className="flex flex-wrap items-center gap-1.5 bg-slate-200/80 dark:bg-[#0e0e14] p-1.5 rounded-xl border border-slate-300 dark:border-white/10 w-full sm:w-auto justify-center">
                 {[
                   { value: 1, label: '1x (Asli)' },
                   { value: 2, label: '2x (Super HD)' },
                   { value: 4, label: '4x (Ultra Cetak)' },
+                  { value: 6, label: '6x (Poster)' },
+                  { value: 8, label: '8x (Besar)' },
+                  { value: 10, label: '10x (Maks. Baliho)' },
                 ].map((u) => (
                   <button
                     key={u.value}
                     onClick={() => setSettings({ ...settings, upscale: u.value as any })}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       settings.upscale === u.value
                         ? 'bg-sky-500 text-white shadow-md'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'

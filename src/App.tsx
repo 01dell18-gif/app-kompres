@@ -108,7 +108,7 @@ export const App: React.FC = () => {
                 Restorasi & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-400 to-sky-500 dark:from-amber-400 dark:via-orange-300 dark:to-sky-400">Tingkatkan Foto</span>
               </h2>
               <p className="text-xs sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed px-2">
-                Perbaiki ketajaman foto buram (de-blur), hilangkan bintik noise, pulihkan foto pudar, dan perbesar resolusi (upscaler 2x/4x) secara lokal.
+                Perbaiki ketajaman foto buram (de-blur), hilangkan bintik noise, pulihkan foto pudar, dan perbesar resolusi (upscaler hingga 10x) secara lokal.
               </p>
             </>
           )}

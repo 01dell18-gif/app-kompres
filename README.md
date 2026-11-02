@@ -47,7 +47,7 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ### 4. ✨ Modul Restorasi Foto (Image Enhancement & Super Resolution)
 
 * **Image Enhancement**: Peningkatan visual otomatis untuk ketajaman, kontras, saturasi, dan pencahayaan (Auto-Enhance).
-* **AI Image Upscaler / Super Resolution**: Pembesaran resolusi 2x dan 4x dengan sintesis detail tepi agar gambar tidak pecah saat dicetak.
+* **AI Image Upscaler / Super Resolution (Hingga 10x)**: Pembesaran resolusi 2x, 4x, 6x, 8x, hingga 10x (Maks. Baliho/Banner) dengan rekonstruksi detail cascading & unsharp masking agar gambar tetap tajam dan tidak pecah saat dicetak dalam format besar.
 * **De-blur / Menjernihkan Foto Buram**: Filter unsharp masking untuk memulihkan detail tepi dan teks buram akibat pergerakan kamera.
 * **Denoise / Pengurangan Bintik Noise**: Menghilangkan bintik kasar (grain) pada foto pencahayaan rendah tanpa menghilangkan garis kontur objek.
 * **Photo Restoration (Pemulihan Foto Lama)**: Dynamic range stretch & auto-level untuk memperbaiki foto jadul yang pudar atau menguning.

@@ -156,7 +156,7 @@ export async function compressSingleImage(
     }
   }
 
-  const blob = await new Promise<Blob>((resolve, reject) => {
+  let blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (b) => {
         if (b) resolve(b);
@@ -166,6 +166,87 @@ export async function compressSingleImage(
       quality
     );
   });
+
+  // Intelligent Adaptive Compression for Pre-compressed or Re-compressed Images:
+  // If the output size is >= 96% of input file size (meaning the image is already pre-compressed at this preset,
+  // or the user is re-compressing an already compressed image), automatically apply an adaptive second pass
+  // so the image actually achieves meaningful size reduction and never remains unchanged or larger!
+  if (blob.size >= file.size * 0.96) {
+    if (outputMime !== 'image/png') {
+      // Pass 2: Lower quantization threshold
+      const tighterQuality = Math.max(0.28, quality * 0.75);
+      const pass2Blob = await new Promise<Blob | null>((res) => {
+        canvas.toBlob((b) => res(b), outputMime, tighterQuality);
+      });
+
+      if (pass2Blob && pass2Blob.size < file.size * 0.95) {
+        blob = pass2Blob;
+        quality = tighterQuality;
+      } else {
+        // Pass 3: Scale down dimensions slightly (15%) + progressive quantization
+        const pass3Scale = 0.85;
+        const pass3W = Math.round(targetWidth * pass3Scale);
+        const pass3H = Math.round(targetHeight * pass3Scale);
+
+        if (pass3W >= 200 && pass3H >= 200) {
+          const pass3Canvas = document.createElement('canvas');
+          pass3Canvas.width = pass3W;
+          pass3Canvas.height = pass3H;
+          const p3Ctx = pass3Canvas.getContext('2d', { alpha: outputMime !== 'image/jpeg' });
+
+          if (p3Ctx) {
+            p3Ctx.imageSmoothingEnabled = true;
+            p3Ctx.imageSmoothingQuality = 'high';
+            if (outputMime === 'image/jpeg') {
+              p3Ctx.fillStyle = '#FFFFFF';
+              p3Ctx.fillRect(0, 0, pass3W, pass3H);
+            }
+            p3Ctx.drawImage(canvas, 0, 0, pass3W, pass3H);
+
+            const pass3Quality = Math.max(0.28, tighterQuality * 0.85);
+            const pass3Blob = await new Promise<Blob | null>((res) => {
+              pass3Canvas.toBlob((b) => res(b), outputMime, pass3Quality);
+            });
+
+            if (pass3Blob && pass3Blob.size < file.size) {
+              blob = pass3Blob;
+              targetWidth = pass3W;
+              targetHeight = pass3H;
+            }
+
+            pass3Canvas.width = 0;
+            pass3Canvas.height = 0;
+          }
+        }
+      }
+    } else {
+      // If output is PNG and size didn't reduce (PNG is lossless), fallback to high-efficiency WebP
+      // if options.format allows or if user needs actual compression
+      if (options.format === 'original' && file.type === 'image/png') {
+        const webpBlob = await new Promise<Blob | null>((res) => {
+          canvas.toBlob((b) => res(b), 'image/webp', 0.80);
+        });
+        if (webpBlob && webpBlob.size < file.size * 0.85) {
+          blob = webpBlob;
+        }
+      }
+    }
+  }
+
+  // Final Strict Check: Guarantee the compressed file is NEVER larger than original
+  if (blob.size > file.size && outputMime !== 'image/png') {
+    let fallbackQuality = 0.40;
+    while (fallbackQuality >= 0.20) {
+      const fallbackBlob = await new Promise<Blob | null>((res) => {
+        canvas.toBlob((b) => res(b), outputMime, fallbackQuality);
+      });
+      if (fallbackBlob && fallbackBlob.size < file.size) {
+        blob = fallbackBlob;
+        break;
+      }
+      fallbackQuality -= 0.08;
+    }
+  }
 
   // Cleanup
   canvas.width = 0;

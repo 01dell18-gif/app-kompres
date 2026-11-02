@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="./logo.png" />
+    <link rel="apple-touch-icon" href="./logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="theme-color" content="#060608" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>FJY Channel Kompres - PDF & Foto 100% Lokal</title>
+    <meta name="description" content="FJY Channel Kompres: Aplikasi pemrosesan berkas terpadu 100% lokal di browser. Kompres PDF, Gabung PDF, dan Kompres Banyak Foto tanpa upload ke server. Cepat, aman, dan privasi terjamin." />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('fjy_theme');
+          var isDark = saved ? saved === 'dark' : true;
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/index-D7nYHRtY.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/vendor-icons-Bdz8s7v8.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-react-DwIYh8Zz.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-pdf-BE-Wiwfu.js">
+    <link rel="modulepreload" crossorigin href="./assets/vendor-zip-CsLxjaP9.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-CndBkEP_.css">
+  </head>
+  <body class="min-h-screen antialiased selection:bg-sky-500 selection:text-white overflow-x-hidden">
+    <div id="root"></div>
+  </body>
+</html>

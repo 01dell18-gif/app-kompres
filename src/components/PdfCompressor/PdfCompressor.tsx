@@ -41,6 +41,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({
     quality: 0.68,
     grayscale: false,
     targetSizeKB: null,
+    dpi: null,
   });
 
   const [status, setStatus] = useState<'idle' | 'loading-info' | 'processing' | 'done' | 'error'>('idle');

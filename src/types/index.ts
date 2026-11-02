@@ -8,6 +8,7 @@ export interface PdfCompressOptions {
   quality: number;
   grayscale: boolean;
   targetSizeKB?: number | null;
+  dpi?: number | null;
 }
 
 export interface PdfProcessItem {

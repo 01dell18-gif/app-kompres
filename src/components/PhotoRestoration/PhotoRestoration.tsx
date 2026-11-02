@@ -385,39 +385,55 @@ export const PhotoRestoration: React.FC<PhotoRestorationProps> = ({
             </div>
 
             {/* AI Image Upscaler / Super Resolution Row */}
-            <div className="bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-xs font-bold text-sky-700 dark:text-sky-300 flex items-center gap-1.5">
-                  <Maximize2 className="w-4 h-4 text-sky-500 dark:text-sky-400" />
-                  <span>AI Super Resolution / Image Upscaler</span>
-                </span>
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
-                  Perbesar resolusi foto dan tambah kerapatan piksel agar tidak pecah saat dicetak.
-                </p>
+            <div className="bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/25 rounded-2xl p-4 sm:p-5 space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-xs sm:text-sm font-bold text-sky-800 dark:text-sky-300 flex items-center gap-2">
+                    <Maximize2 className="w-4 h-4 text-sky-500 dark:text-sky-400" />
+                    <span>AI Super Resolution / Image Upscaler</span>
+                  </span>
+                  <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Perbesar resolusi foto dan tambah kerapatan piksel agar tidak pecah saat dicetak.
+                  </p>
+                </div>
+                {restoredWidth > 0 && settings.upscale > 1 && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-500/30 text-sky-700 dark:text-sky-300 text-xs font-semibold self-start sm:self-auto">
+                    <span>Luaran: {restoredWidth} × {restoredHeight} px ({settings.upscale}x)</span>
+                  </div>
+                )}
               </div>
 
-              {/* Upscale Radio Buttons */}
-              <div className="flex flex-wrap items-center gap-1.5 bg-slate-200/80 dark:bg-[#0e0e14] p-1.5 rounded-xl border border-slate-300 dark:border-white/10 w-full sm:w-auto justify-center">
+              {/* Upscale Radio Buttons Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                 {[
-                  { value: 1, label: '1x (Asli)' },
-                  { value: 2, label: '2x (Super HD)' },
-                  { value: 4, label: '4x (Ultra Cetak)' },
-                  { value: 6, label: '6x (Poster)' },
-                  { value: 8, label: '8x (Besar)' },
-                  { value: 10, label: '10x (Maks. Baliho)' },
-                ].map((u) => (
-                  <button
-                    key={u.value}
-                    onClick={() => setSettings({ ...settings, upscale: u.value as any })}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      settings.upscale === u.value
-                        ? 'bg-sky-500 text-white shadow-md'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    {u.label}
-                  </button>
-                ))}
+                  { value: 1, label: '1x', tag: 'Asli', desc: 'Ukuran Asli' },
+                  { value: 2, label: '2x', tag: 'Super HD', desc: 'Pasfoto/Dokumen' },
+                  { value: 4, label: '4x', tag: 'Ultra Cetak', desc: 'Cetak Foto 10R/12R' },
+                  { value: 6, label: '6x', tag: 'Poster', desc: 'Poster Dinding A3/A2' },
+                  { value: 8, label: '8x', tag: 'Besar', desc: 'Standing Banner/A1' },
+                  { value: 10, label: '10x', tag: 'Maks. Baliho', desc: 'Billboard / Spanduk' },
+                ].map((u) => {
+                  const isSelected = settings.upscale === u.value;
+                  return (
+                    <button
+                      key={u.value}
+                      type="button"
+                      onClick={() => setSettings({ ...settings, upscale: u.value as any })}
+                      className={`relative flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border text-center transition-all ${
+                        isSelected
+                          ? 'bg-sky-500 text-white border-sky-400 shadow-md shadow-sky-500/25 ring-2 ring-sky-400/40 scale-[1.02]'
+                          : 'bg-white/80 dark:bg-[#12121c] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-sky-400/50 hover:bg-slate-100 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <span className="text-xs sm:text-sm font-bold tracking-tight">
+                        {u.label} <span className="font-semibold text-[11px] sm:text-xs">({u.tag})</span>
+                      </span>
+                      <span className={`text-[10px] mt-0.5 line-clamp-1 ${isSelected ? 'text-sky-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                        {u.desc}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

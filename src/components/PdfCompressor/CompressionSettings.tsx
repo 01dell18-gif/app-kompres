@@ -1,5 +1,5 @@
-import React from 'react';
-import { Settings2, Zap, Sparkles, Printer, Palette, Target } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings2, Zap, Sparkles, Printer, Palette, Target, Gauge, Sliders } from 'lucide-react';
 import { PdfCompressOptions, PdfPreset } from '../../types';
 
 interface CompressionSettingsProps {
@@ -51,12 +51,28 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
     },
   ];
 
-  const targetSizeOptions = [
-    { label: 'Bebas (Sesuai Preset)', value: null },
-    { label: '< 200 KB (CASN / BUMN)', value: 200 },
-    { label: '< 500 KB (Portal Instansi)', value: 500 },
-    { label: '< 1000 KB (1 MB)', value: 1000 },
-  ];
+  // Local state for custom typing of target size
+  const [typedSizeValue, setTypedSizeValue] = useState<string>(() => {
+    if (!options.targetSizeKB) return '';
+    if (options.targetSizeKB >= 1024 && options.targetSizeKB % 1024 === 0) {
+      return (options.targetSizeKB / 1024).toString();
+    }
+    return options.targetSizeKB.toString();
+  });
+
+  const [typedSizeUnit, setTypedSizeUnit] = useState<'KB' | 'MB'>(() => {
+    if (options.targetSizeKB && options.targetSizeKB >= 1024 && options.targetSizeKB % 1024 === 0) {
+      return 'MB';
+    }
+    return 'KB';
+  });
+
+  // Sync internal state if external options.targetSizeKB changes
+  useEffect(() => {
+    if (options.targetSizeKB === null || options.targetSizeKB === undefined) {
+      setTypedSizeValue('');
+    }
+  }, [options.targetSizeKB]);
 
   const handlePresetSelect = (preset: typeof presets[0]) => {
     onChange({
@@ -64,13 +80,45 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
       preset: preset.id,
       scale: preset.scale,
       quality: preset.quality,
+      dpi: null, // Reset custom DPI to auto when selecting preset
     });
   };
 
-  const handleTargetChange = (val: number | null) => {
+  const handleApplyTypedSize = (valStr: string, unit: 'KB' | 'MB') => {
+    setTypedSizeValue(valStr);
+    setTypedSizeUnit(unit);
+
+    const num = parseFloat(valStr);
+    if (isNaN(num) || num <= 0) {
+      onChange({ ...options, targetSizeKB: null });
+      return;
+    }
+
+    const sizeKB = unit === 'MB' ? Math.round(num * 1024) : Math.round(num);
+    onChange({ ...options, targetSizeKB: sizeKB });
+  };
+
+  const handleQuickTargetClick = (valKB: number | null) => {
+    if (valKB === null) {
+      setTypedSizeValue('');
+      onChange({ ...options, targetSizeKB: null });
+    } else if (valKB >= 1024 && valKB % 1024 === 0) {
+      const mbVal = valKB / 1024;
+      setTypedSizeValue(mbVal.toString());
+      setTypedSizeUnit('MB');
+      onChange({ ...options, targetSizeKB: valKB });
+    } else {
+      setTypedSizeValue(valKB.toString());
+      setTypedSizeUnit('KB');
+      onChange({ ...options, targetSizeKB: valKB });
+    }
+  };
+
+  const handleDpiSelect = (dpiVal: number | null) => {
     onChange({
       ...options,
-      targetSizeKB: val,
+      dpi: dpiVal,
+      scale: dpiVal ? Math.round((dpiVal / 72) * 100) / 100 : options.scale,
     });
   };
 
@@ -81,25 +129,34 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
     });
   };
 
+  const dpiPresets: { value: number | null; label: string; desc: string }[] = [
+    { value: null, label: 'Otomatis', desc: 'Disesuaikan pintar' },
+    { value: 72, label: '72 DPI', desc: 'Layar / Web Ringan' },
+    { value: 96, label: '96 DPI', desc: 'Teks Kantor' },
+    { value: 150, label: '150 DPI', desc: 'Standar CASN' },
+    { value: 200, label: '200 DPI', desc: 'Sangat Tajam' },
+    { value: 300, label: '300 DPI', desc: 'Kualitas Cetak' },
+  ];
+
   return (
-    <div className="glass-card rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
-      <div className="flex items-center gap-2.5 pb-3 sm:pb-4 border-b border-slate-200 dark:border-white/10 mb-4 sm:mb-5">
+    <div className="glass-card rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 space-y-5">
+      <div className="flex items-center gap-2.5 pb-3 sm:pb-4 border-b border-slate-200 dark:border-white/10">
         <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-sky-500 dark:text-sky-400" />
         <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">Pengaturan Kompresi Dokumen</h3>
       </div>
 
       {/* Preset Radio Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 sm:mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {presets.map((p) => {
           const Icon = p.icon;
-          const isSelected = options.preset === p.id;
+          const isSelected = options.preset === p.id && !options.dpi;
           return (
             <div
               key={p.id}
               onClick={() => !disabled && handlePresetSelect(p)}
               className={`relative cursor-pointer rounded-xl p-3.5 sm:p-4 border transition-all duration-200 flex flex-col justify-between active:scale-[0.99] ${
                 isSelected
-                  ? 'bg-sky-500/10 border-sky-500/50 shadow-md shadow-sky-500/10'
+                  ? 'bg-sky-500/10 border-sky-500/50 shadow-md shadow-sky-500/10 ring-1 ring-sky-500/30'
                   : 'bg-slate-50/80 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-white/[0.04]'
               } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
             >
@@ -135,45 +192,172 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
         })}
       </div>
 
-      {/* Advanced Row: Target Size & Grayscale */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-slate-200 dark:border-white/5">
-        {/* Target Size Selector */}
-        <div className="space-y-1.5">
-          <label className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-500 dark:text-cyan-400" />
-            <span>Target Batas Ukuran (Opsional)</span>
+      {/* Row: Custom DPI Quality Settings */}
+      <div className="bg-slate-50 dark:bg-[#151520] border border-slate-200 dark:border-white/5 rounded-2xl p-4 sm:p-5 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <label className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+            <Gauge className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+            <span>Kualitas Resolusi DPI (Kerapatan Titik):</span>
           </label>
-          <select
-            value={options.targetSizeKB === null ? '' : options.targetSizeKB}
-            onChange={(e) => {
-              const val = e.target.value === '' ? null : Number(e.target.value);
-              handleTargetChange(val);
-            }}
+          <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded-md bg-sky-500/10 border border-sky-500/20 self-start sm:self-auto">
+            {options.dpi ? `${options.dpi} DPI (~${Math.round((options.dpi / 72) * 100) / 100}x)` : 'Otomatis (Sesuai Preset)'}
+          </span>
+        </div>
+
+        {/* DPI Preset Chips */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {dpiPresets.map((d) => {
+            const isSelected = options.dpi === d.value;
+            return (
+              <button
+                key={d.label}
+                type="button"
+                onClick={() => !disabled && handleDpiSelect(d.value)}
+                disabled={disabled}
+                className={`py-2 px-2.5 rounded-xl border text-center transition-all ${
+                  isSelected
+                    ? 'bg-sky-500 text-white border-sky-400 shadow-md shadow-sky-500/20 ring-1 ring-sky-400/40'
+                    : 'bg-white/80 dark:bg-[#1a1a28] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-sky-400/40 hover:bg-slate-100 dark:hover:bg-white/5'
+                }`}
+              >
+                <div className="text-xs font-bold">{d.label}</div>
+                <div className={`text-[10px] mt-0.5 ${isSelected ? 'text-sky-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                  {d.desc}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Custom DPI Slider */}
+        <div className="pt-2 flex items-center gap-3">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 flex-shrink-0">Geser DPI Bebas:</span>
+          <input
+            type="range"
+            min="50"
+            max="300"
+            step="5"
+            value={options.dpi || 126}
+            onChange={(e) => handleDpiSelect(Number(e.target.value))}
             disabled={disabled}
-            className="w-full bg-slate-50 dark:bg-[#181822] border border-slate-300 dark:border-white/10 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-sky-500 min-h-[40px]"
-          >
-            {targetSizeOptions.map((opt, i) => (
-              <option key={i} value={opt.value === null ? '' : opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            className="w-full accent-sky-500 cursor-pointer h-2 bg-slate-200 dark:bg-slate-800 rounded-lg"
+          />
+          <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300 w-16 text-right">
+            {options.dpi || 126} DPI
+          </span>
+        </div>
+      </div>
+
+      {/* Row: Target Size (Typing Allowed) & Grayscale */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-white/5">
+        {/* Custom Target Size Input (Dapat Diketik Permintaan Size-nya) */}
+        <div className="bg-slate-50 dark:bg-[#151520] border border-slate-200 dark:border-white/5 rounded-2xl p-4 sm:p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <Target className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+              <span>Target Batas Ukuran (Bisa Diketik):</span>
+            </label>
+            {options.targetSizeKB && (
+              <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+                Target: &lt; {options.targetSizeKB >= 1024 ? `${(options.targetSizeKB / 1024).toFixed(1)} MB` : `${options.targetSizeKB} KB`}
+              </span>
+            )}
+          </div>
+
+          {/* Typing Input Box with Unit Selector */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <input
+                type="number"
+                min="10"
+                max="100000"
+                step="any"
+                placeholder="Ketik ukuran target, cth: 200, 350, 1.5..."
+                value={typedSizeValue}
+                onChange={(e) => handleApplyTypedSize(e.target.value, typedSizeUnit)}
+                disabled={disabled}
+                className="w-full bg-white dark:bg-[#1a1a28] border border-slate-300 dark:border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-sky-500 font-mono"
+              />
+            </div>
+
+            <div className="flex items-center rounded-xl bg-slate-200 dark:bg-[#1a1a28] p-1 border border-slate-300 dark:border-white/10">
+              <button
+                type="button"
+                onClick={() => handleApplyTypedSize(typedSizeValue, 'KB')}
+                disabled={disabled}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  typedSizeUnit === 'KB'
+                    ? 'bg-sky-500 text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                KB
+              </button>
+              <button
+                type="button"
+                onClick={() => handleApplyTypedSize(typedSizeValue, 'MB')}
+                disabled={disabled}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  typedSizeUnit === 'MB'
+                    ? 'bg-sky-500 text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                MB
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Preset Chips */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 mr-1">Pilihan Cepat:</span>
+            {[
+              { label: 'Bebas (Otomatis)', value: null },
+              { label: '200 KB (CASN)', value: 200 },
+              { label: '500 KB (Instansi)', value: 500 },
+              { label: '1 MB', value: 1024 },
+              { label: '2 MB', value: 2048 },
+            ].map((chip) => {
+              const isSelected = options.targetSizeKB === chip.value;
+              return (
+                <button
+                  key={chip.label}
+                  type="button"
+                  onClick={() => !disabled && handleQuickTargetClick(chip.value)}
+                  disabled={disabled}
+                  className={`text-[10px] px-2.5 py-1 rounded-lg border font-medium transition-all ${
+                    isSelected
+                      ? 'bg-emerald-500 text-white border-emerald-400 shadow-sm'
+                      : 'bg-white/80 dark:bg-[#1a1a28] border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:border-emerald-400/40 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
           <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
-            Algoritma otomatis menyesuaikan kerapatan agar teks tetap tajam dan di bawah batas target.
+            Ketik permintaan ukuran berkas yang Anda butuhkan (contoh: portal hanya menerima maksimal 300 KB).
           </p>
         </div>
 
         {/* Grayscale Mode Checkbox */}
-        <div className="space-y-1.5">
-          <label className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 dark:text-amber-400" />
-            <span>Mode Skala Abu-abu (Monokrom)</span>
-          </label>
+        <div className="bg-slate-50 dark:bg-[#151520] border border-slate-200 dark:border-white/5 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-3">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <Palette className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+              <span>Mode Skala Abu-abu (Monokrom Dokumen)</span>
+            </label>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Menghilangkan kanal warna untuk meningkatkan kontras teks hitam-putih dan memotong ukuran dokumen pindaian ijazah/KTP hingga 40% tambahan.
+            </p>
+          </div>
+
           <label
-            className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors min-h-[40px] ${
+            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
               options.grayscale
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-800 dark:text-amber-200'
-                : 'bg-slate-50 dark:bg-[#181822] border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300'
+                ? 'bg-amber-500/15 border-amber-500/40 text-amber-900 dark:text-amber-200'
+                : 'bg-white dark:bg-[#1a1a28] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300'
             } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
           >
             <input
@@ -183,11 +367,8 @@ export const CompressionSettings: React.FC<CompressionSettingsProps> = ({
               disabled={disabled}
               className="rounded border-slate-300 dark:border-white/20 text-sky-500 focus:ring-0 bg-white dark:bg-black/40 w-4 h-4 flex-shrink-0"
             />
-            <span className="text-xs font-medium">Ubah dokumen menjadi Grayscale</span>
+            <span className="text-xs font-semibold">Aktifkan Dokumen Skala Abu-Abu (Grayscale)</span>
           </label>
-          <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
-            Meningkatkan kontras teks dan memotong ukuran dokumen pindaian hingga 40% tambahan.
-          </p>
         </div>
       </div>
     </div>

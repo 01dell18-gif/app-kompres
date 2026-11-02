@@ -17,7 +17,8 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
   * **Ekstrem / Maksimum**: Resolusi ~97 DPI, ideal untuk syarat ketat portal pendaftaran (<200 KB atau <500 KB). Teks pindaian KTP & ijazah tetap terbaca jelas.
   * **Seimbang (Rekomendasi)**: Resolusi ~126 DPI, teks stempel & angka sangat tajam dengan penghematan 50%–75%.
   * **Ringan / Kualitas Cetak**: Resolusi ~158 DPI studio, mempertahankan detail halus, siap dicetak fisik tanpa blur.
-* **Target Batas Ukuran Otomatis**: Mendukung target batas instansi resmi (`< 200 KB`, `< 500 KB`, `< 1000 KB`).
+* **Kualitas Resolusi DPI Kustom**: Slider & pilihan instan (72 DPI Layar, 96 DPI Kantor, 150 DPI Standar CASN, 200 DPI Sangat Jernih, 300 DPI Studio Cetak Fisik).
+* **Target Batas Ukuran Fleksibel (Bisa Diketik Permintaan Size-nya)**: Pengguna dapat langsung mengetik angka target ukuran dokumen yang diinginkan dalam satuan KB atau MB (misal: 250 KB, 350 KB, 1.5 MB), disertai tombol pintas cepat instansi (<200 KB, <500 KB, 1 MB, 2 MB).
 * **Mode Skala Abu-Abu (Grayscale)**: Menghapus kanal warna untuk memangkas ukuran dokumen pindaian/ijazah berwarna hingga 40% tambahan.
 * **Before / After Split-View Inspector**: Membandingkan ketajaman visual sebelum dan sesudah kompresi dengan slider interaktif.
 * **Tindakan Terpadu (Chaining)**: Mengalirkan hasil kompresi langsung ke menu penggabungan dokumen tanpa unduh-unggah manual.

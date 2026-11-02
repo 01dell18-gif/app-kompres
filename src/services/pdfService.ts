@@ -127,23 +127,33 @@ export async function compressPdf(
     let renderScale = options.scale;
     let jpegQuality = options.quality;
 
-    if (targetBudgetPerPage < 25 * 1024) {
-      // Low per-page budget (e.g., 95-page text/spreadsheet document or CASN <200KB)
-      renderScale = 1.20;
-      jpegQuality = 0.40;
-    } else if (targetBudgetPerPage < 45 * 1024) {
-      renderScale = 1.32;
-      jpegQuality = 0.48;
-    } else if (targetBudgetPerPage < 75 * 1024) {
-      renderScale = 1.48;
-      jpegQuality = 0.58;
-    } else if (targetBudgetPerPage < 130 * 1024) {
-      renderScale = 1.62;
-      jpegQuality = 0.65;
+    if (options.dpi && options.dpi > 0) {
+      // User explicitly set custom DPI: scale = DPI / 72 (Standard PDF 72pt/inch)
+      renderScale = Math.round((options.dpi / 72) * 100) / 100;
+      if (options.targetSizeKB && options.targetSizeKB > 0) {
+        const estPixelCount = 595 * renderScale * 842 * renderScale;
+        const estBudgetRatio = targetBudgetPerPage / (estPixelCount * 0.12);
+        jpegQuality = Math.max(0.30, Math.min(0.85, 0.58 * Math.sqrt(Math.max(0.2, estBudgetRatio))));
+      }
     } else {
-      // Plenty of budget per page (e.g., 1-2 page document with large original size)
-      renderScale = options.scale;
-      jpegQuality = options.quality;
+      if (targetBudgetPerPage < 25 * 1024) {
+        // Low per-page budget (e.g., 95-page text/spreadsheet document or CASN <200KB)
+        renderScale = 1.20;
+        jpegQuality = 0.40;
+      } else if (targetBudgetPerPage < 45 * 1024) {
+        renderScale = 1.32;
+        jpegQuality = 0.48;
+      } else if (targetBudgetPerPage < 75 * 1024) {
+        renderScale = 1.48;
+        jpegQuality = 0.58;
+      } else if (targetBudgetPerPage < 130 * 1024) {
+        renderScale = 1.62;
+        jpegQuality = 0.65;
+      } else {
+        // Plenty of budget per page (e.g., 1-2 page document with large original size)
+        renderScale = options.scale;
+        jpegQuality = options.quality;
+      }
     }
 
     const newPdf = await PDFDocument.create();

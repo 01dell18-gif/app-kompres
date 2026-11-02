@@ -94,3 +94,20 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log('  [TIPS] Tekan Ctrl + C pada jendela ini jika ingin menutup aplikasi.');
   console.log('========================================================================\n');
 });
+
+// Penanganan sinyal penutupan (Ctrl + C / SIGINT / SIGTERM)
+function shutdown() {
+  console.log('\n========================================================================');
+  console.log('   [INFO] Menutup server FJY Channel Kompres...');
+  server.close(() => {
+    console.log('   [OK] Server berhasil dimatikan. Port 5173 telah dibebaskan.');
+    console.log('========================================================================\n');
+    process.exit(0);
+  });
+  // Paksa keluar jika ada koneksi peramban yang masih menggantung
+  setTimeout(() => process.exit(0), 1000);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('SIGHUP', shutdown);

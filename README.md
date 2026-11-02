@@ -76,8 +76,8 @@ Aplikasi web terpadu untuk **Kompresi PDF**, **Penggabungan Banyak PDF**, **Komp
 ## 🚀 Cara Menjalankan Proyek di Komputer Lokal
 
 ### Cara Praktis & Otomatis (Cukup Klik Ganda):
-Cukup **klik ganda (double-click)** pada salah satu berkas launcher berikut:
-👉 **`start.bat`** (atau **`jalankan.bat`**)
+Cukup **klik ganda (double-click)** pada berkas peluncur tunggal:
+👉 **`jalankan.bat`**
 
 Skrip cerdas ini dirancang khusus untuk mendeteksi perangkat baru secara otomatis:
 1. **Instalasi Otomatis dari Folder `installers/`**:
@@ -87,6 +87,8 @@ Skrip cerdas ini dirancang khusus untuk mendeteksi perangkat baru secara otomati
    - Begitu terpasang, aplikasi langsung berjalan secara instan (*under 1 second*) menggunakan server lokal mandiri tanpa perlu menunggu unduhan `npm install`.
 3. **Membuka Peramban Seketika**: Membuka browser bawaan secara otomatis ke alamat: **`http://localhost:5173/`**.
 4. **Dukungan Jaringan / Mode HP**: Menampilkan alamat IP lokal Wi-Fi sehingga aplikasi juga dapat diakses langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
+5. **Mematikan Server dengan Bersih (Ctrl + C)**:
+   - Saat jendela ditutup atau pengguna menekan `Ctrl + C` (lalu `Y`), server langsung ditutup dan port 5173 dibebaskan sepenuhnya tanpa menyisakan proses di latar belakang.
 
 ---
 

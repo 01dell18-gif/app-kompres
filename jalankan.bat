@@ -91,7 +91,7 @@ goto :node_ready
 
 :node_fail
 echo.
-echo [ERROR] Node.js belum berhasil dikenali. Silakan buka kembali start.bat.
+echo [ERROR] Node.js belum berhasil dikenali. Silakan buka kembali jalankan.bat.
 pause
 exit /b 1
 
@@ -138,6 +138,9 @@ echo.
 echo [3/3] Menjalankan server aplikasi web lokal...
 echo.
 
+:: Bersihkan proses lama di port 5173 jika ada
+for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":5173 " ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>nul
+
 :: Buka browser secara otomatis ke localhost:5173
 start "" http://localhost:5173/
 
@@ -152,6 +155,11 @@ goto :server_end
 
 :server_end
 echo.
-echo Server selesai atau ditutup.
+echo ========================================================================
+echo [INFO] Menutup server aplikasi dan mematikan port 5173...
+for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":5173 " ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>nul
+echo [OK] Aplikasi web telah berhasil dimatikan sepenuhnya.
+echo ========================================================================
+echo.
 pause
 exit /b 0

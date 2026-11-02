@@ -79,10 +79,13 @@ Cukup **klik ganda (double-click)** pada salah satu berkas launcher berikut:
 👉 **`start.bat`** (atau **`jalankan.bat`**)
 
 Skrip cerdas ini dirancang khusus untuk mendeteksi perangkat baru secara otomatis:
-1. **Pemeriksaan Runtime Node.js**: Mengecek apakah Node.js sudah terpasang. Jika belum ada di komputer baru, skrip akan memberikan tautan resmi dan menawarkan untuk membuka halaman unduh Node.js secara otomatis.
-2. **Pemasangan Pustaka Otomatis**: Jika folder `node_modules` belum ada, skrip akan langsung menjalankan `npm install` hingga tuntas tanpa perlu mengetik perintah terminal.
-3. **Membuka Peramban Seketika**: Membuka browser bawaan ke alamat `http://localhost:5173/`.
-4. **Dukungan Jaringan / Mode HP**: Menjalankan server lokal dengan opsi `--host` sehingga aplikasi juga dapat dibuka langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
+1. **Instalasi Otomatis dari Folder `installers/`**:
+   - Jika komputer baru belum terpasang Node.js, skrip akan **otomatis memasang Node.js LTS** dari berkas instalasi resmi di dalam folder `installers/node-v24.22.2-x64.msi` tanpa perlu mencari atau mengunduh manual.
+   - Jika berkas installer belum ada, skrip akan otomatis mengunduh installer resmi ke folder `installers/`.
+2. **Server Mandiri 100% Offline (`server.js`)**:
+   - Begitu terpasang, aplikasi langsung berjalan secara instan (*under 1 second*) menggunakan server lokal mandiri tanpa perlu menunggu unduhan `npm install`.
+3. **Membuka Peramban Seketika**: Membuka browser bawaan secara otomatis ke alamat: **`http://localhost:5173/`**.
+4. **Dukungan Jaringan / Mode HP**: Menampilkan alamat IP lokal Wi-Fi sehingga aplikasi juga dapat diakses langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
 
 ---
 

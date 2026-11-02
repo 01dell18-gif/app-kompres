@@ -17,6 +17,33 @@ export const App: React.FC = () => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('fjy_theme') : null;
     return saved === 'light' || saved === 'dark' ? saved : 'dark';
   });
+  const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
+
+  // Monitor server status in real time
+  useEffect(() => {
+    const isLocalhost =
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.startsWith('192.168.') ||
+      window.location.hostname.startsWith('10.');
+
+    if (!isLocalhost) return;
+
+    const checkServerHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1200);
+        const res = await fetch('/api/health', { signal: controller.signal, cache: 'no-store' });
+        clearTimeout(timeoutId);
+        setIsServerOnline(res.ok);
+      } catch {
+        setIsServerOnline(false);
+      }
+    };
+
+    const interval = setInterval(checkServerHealth, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -58,10 +85,31 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#060608] text-slate-800 dark:text-slate-100 bg-radial-glow selection:bg-sky-500 selection:text-white overflow-x-hidden transition-colors duration-200">
       {/* Top Navbar with Theme Switcher */}
-      <Header theme={theme} onToggleTheme={toggleTheme} />
+      <Header theme={theme} onToggleTheme={toggleTheme} isServerOnline={isServerOnline} />
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        {/* Offline / Server Shutdown Alert */}
+        {!isServerOnline && (
+          <div className="mb-6 p-4 rounded-2xl bg-rose-500/15 border-2 border-rose-500 text-rose-800 dark:text-rose-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                ✕
+              </div>
+              <div>
+                <h4 className="font-bold text-sm sm:text-base text-rose-900 dark:text-rose-100">
+                  Server Lokal Dinonaktifkan (Ctrl + C)
+                </h4>
+                <p className="text-xs text-rose-700 dark:text-rose-300">
+                  Server di terminal telah dimatikan sepenuhnya. Untuk menggunakan web kembali, jalankan berkas <strong>jalankan.bat</strong>.
+                </p>
+              </div>
+            </div>
+            <div className="text-xs font-semibold px-3 py-1 rounded-xl bg-rose-500 text-white">
+              Status: Nonaktif
+            </div>
+          </div>
+        )}
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-4 sm:mb-8 space-y-2 sm:space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 text-[11px] sm:text-xs font-semibold">

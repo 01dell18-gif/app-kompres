@@ -3,13 +3,20 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-// Register Service Worker for offline PWA operation with domain portability
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    const swUrl = new URL('sw.js', document.baseURI || window.location.href).href;
-    navigator.serviceWorker.register(swUrl).catch((err) => {
-      console.log('SW registration note:', err);
-    });
+// Unregister any Service Worker and clear CacheStorage to guarantee
+// that pressing Ctrl+C in terminal immediately and cleanly shuts down the web
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+if ('caches' in window) {
+  caches.keys().then((keys) => {
+    for (const key of keys) {
+      caches.delete(key);
+    }
   });
 }
 

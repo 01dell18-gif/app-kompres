@@ -32,6 +32,11 @@ const server = http.createServer((req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   let reqPath = decodeURI(req.url.split('?')[0]);
+  if (reqPath === '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    res.end(JSON.stringify({ status: 'ok', time: Date.now() }));
+    return;
+  }
   if (reqPath === '/') reqPath = '/index.html';
 
   let filePath = path.join(PUBLIC_DIR, reqPath);

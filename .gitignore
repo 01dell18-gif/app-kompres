@@ -28,3 +28,8 @@ Thumbs.db
 *.rar
 *.zip
 *.7z
+
+# Explicitly track offline installers and runtime packages (< 100 MB)
+!installers/*.zip
+!installers/*.exe
+!installers/*.msi

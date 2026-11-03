@@ -80,15 +80,17 @@ Cukup **klik ganda (double-click)** pada berkas peluncur tunggal:
 👉 **`jalankan.bat`**
 
 Skrip cerdas ini dirancang khusus untuk mendeteksi perangkat baru secara otomatis:
-1. **Instalasi Otomatis dari Folder `installers/`**:
-   - Jika komputer baru belum terpasang Node.js, skrip akan **otomatis memasang Node.js LTS** dari berkas instalasi resmi di dalam folder `installers/node-v24.22.2-x64.msi` tanpa perlu mencari atau mengunduh manual.
-   - Jika berkas installer belum ada, skrip akan otomatis mengunduh installer resmi ke folder `installers/`.
-2. **Server Mandiri 100% Offline (`server.js`)**:
-   - Begitu terpasang, aplikasi langsung berjalan secara instan (*under 1 second*) menggunakan server lokal mandiri tanpa perlu menunggu unduhan `npm install`.
-3. **Membuka Peramban Seketika**: Membuka browser bawaan secara otomatis ke alamat: **`http://localhost:5173/`**.
-4. **Dukungan Jaringan / Mode HP**: Menampilkan alamat IP lokal Wi-Fi sehingga aplikasi juga dapat diakses langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
-5. **Mematikan Server dengan Bersih (Ctrl + C)**:
-   - Saat jendela ditutup atau pengguna menekan `Ctrl + C` (lalu `Y`), server langsung ditutup dan port 5173 dibebaskan sepenuhnya tanpa menyisakan proses di latar belakang.
+1. **Mode Portabel Instan (Zero-Install & Zero-Admin)**:
+   - Folder `installers/` telah dilengkapi dengan biner portabel `node.exe` (v20.18.3) serta installer resmi `node-v24.22.2-x64.msi`.
+   - Di komputer baru tanpa Node.js terpasang, skrip langsung mengeksekusi biner portabel dalam 0.1 detik **tanpa memerlukan hak Administrator (UAC)** dan **tanpa koneksi internet**.
+2. **Paket Modul Offline Cadangan (`installers/node_modules_offline.zip`)**:
+   - Jika berkas produksi belum dikompilasi, skrip otomatis mengekstrak seluruh paket pustaka dari arsip offline tanpa perlu mengunduh `npm install` dari internet.
+3. **Server Mandiri 100% Offline (`server.js`)**:
+   - Berjalan mandiri menyajikan folder produksi `dist/` secara instan (*under 1 second*).
+4. **Membuka Peramban Seketika**: Membuka browser bawaan secara otomatis ke alamat: **`http://localhost:5173/`**.
+5. **Dukungan Jaringan / Mode HP**: Menampilkan alamat IP lokal Wi-Fi sehingga aplikasi juga dapat diakses langsung dari layar smartphone atau tablet dalam satu jaringan Wi-Fi.
+6. **Mematikan Server dengan Bersih (Ctrl + C)**:
+   - Saat jendela ditutup atau pengguna menekan `Ctrl + C` (lalu `Y`), server langsung ditutup dan port 5173 dibebaskan sepenuhnya tanpa menyisakan proses di latar belakang. Indikator di peramban otomatis berubah menjadi status *Server Mati*.
 
 ---
 

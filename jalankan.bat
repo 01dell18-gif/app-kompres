@@ -1,5 +1,5 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal EnableExtensions EnableDelayedExpansion
 title FJY Channel Kompres - Sistem Pemrosesan Berkas Lokal
 color 0B
 cls
@@ -18,147 +18,162 @@ echo.
 :: --------------------------------------------------------------------------
 echo [1/3] Memeriksa ketersediaan aplikasi dan komponen sistem...
 
-:: Cek apakah command node sudah ada di PATH
-where node >nul 2>nul
-if not errorlevel 1 goto :node_ready
+set "NODE_CMD="
 
-:: Cek apakah portable node.exe ada di folder installers atau installer
+:: Prioritas 1: Portable node.exe langsung di folder installers (Zero-Install, Cepat, Offline)
 if exist "%~dp0installers\node.exe" (
-    set "PATH=%~dp0installers;!PATH!"
+    set "NODE_CMD=%~dp0installers\node.exe"
     goto :node_ready
 )
 if exist "%~dp0installer\node.exe" (
-    set "PATH=%~dp0installer;!PATH!"
+    set "NODE_CMD=%~dp0installer\node.exe"
     goto :node_ready
 )
 
-:: Cek apakah Node.js terpasang di lokasi standar Windows
-if exist "C:\Program Files\nodejs\node.exe" goto :found_pf
-if exist "C:\Program Files (x86)\nodejs\node.exe" goto :found_pfx86
-if exist "%LocalAppData%\Programs\node\node.exe" goto :found_local
-goto :install_node
+:: Prioritas 2: Ekstrak node.exe otomatis dari paket zip jika ada di installers
+if exist "%~dp0installers\node-v20.18.3-win-x64.zip" (
+    echo [INFO] Menyiapkan Node.js portable dari paket offline...
+    tar -xf "%~dp0installers\node-v20.18.3-win-x64.zip" --strip-components=1 -C "%~dp0installers" "node-v20.18.3-win-x64/node.exe" >nul 2>nul
+    if exist "%~dp0installers\node.exe" (
+        set "NODE_CMD=%~dp0installers\node.exe"
+        goto :node_ready
+    )
+)
 
-:found_pf
-set "PATH=C:\Program Files\nodejs;%AppData%\npm;!PATH!"
-goto :node_ready
+:: Prioritas 3: Cek apakah node sudah terpasang di sistem (PATH)
+where node >nul 2>nul
+if not errorlevel 1 (
+    set "NODE_CMD=node"
+    goto :node_ready
+)
 
-:found_pfx86
-set "PATH=C:\Program Files (x86)\nodejs;%AppData%\npm;!PATH!"
-goto :node_ready
+:: Prioritas 4: Cek lokasi instalasi standar Windows
+if exist "C:\Program Files\nodejs\node.exe" (
+    set "NODE_CMD=C:\Program Files\nodejs\node.exe"
+    goto :node_ready
+)
+if exist "C:\Program Files (x86)\nodejs\node.exe" (
+    set "NODE_CMD=C:\Program Files (x86)\nodejs\node.exe"
+    goto :node_ready
+)
+if exist "%LocalAppData%\Programs\node\node.exe" (
+    set "NODE_CMD=%LocalAppData%\Programs\node\node.exe"
+    goto :node_ready
+)
 
-:found_local
-set "PATH=%LocalAppData%\Programs\node;!PATH!"
-goto :node_ready
+:: Prioritas 5: Jalankan instalasi dari paket MSI di folder installers
+goto :install_node_msi
 
-:install_node
+:install_node_msi
 echo.
 echo ========================================================================
 echo [INFO] Perangkat baru terdeteksi: Node.js belum terpasang di sistem.
-echo [INFO] Memeriksa installer di folder installers / installer...
+echo [INFO] Memeriksa paket instalasi offline di folder installers...
 echo ========================================================================
 echo.
 
 set "INSTALLER_MSI="
-if exist "installers\node-v24.22.2-x64.msi" set "INSTALLER_MSI=installers\node-v24.22.2-x64.msi"
-if exist "installer\node-v24.22.2-x64.msi" set "INSTALLER_MSI=installer\node-v24.22.2-x64.msi"
+if exist "%~dp0installers\node-v24.22.2-x64.msi" set "INSTALLER_MSI=%~dp0installers\node-v24.22.2-x64.msi"
+if exist "%~dp0installer\node-v24.22.2-x64.msi" set "INSTALLER_MSI=%~dp0installer\node-v24.22.2-x64.msi"
 
-if not defined INSTALLER_MSI for %%f in ("installers\node*.msi") do set "INSTALLER_MSI=%%~ff"
-if not defined INSTALLER_MSI for %%f in ("installer\node*.msi") do set "INSTALLER_MSI=%%~ff"
-if not defined INSTALLER_MSI for %%f in ("installers\*.msi") do set "INSTALLER_MSI=%%~ff"
-if not defined INSTALLER_MSI for %%f in ("installer\*.msi") do set "INSTALLER_MSI=%%~ff"
+if not defined INSTALLER_MSI (
+    for %%f in ("%~dp0installers\node*.msi") do set "INSTALLER_MSI=%%~ff"
+)
+if not defined INSTALLER_MSI (
+    for %%f in ("%~dp0installer\node*.msi") do set "INSTALLER_MSI=%%~ff"
+)
 
-if defined INSTALLER_MSI goto :run_installer
+if not defined INSTALLER_MSI goto :node_not_found
 
-echo [INFO] Mengunduh berkas installer resmi Node.js ke folder installers...
-if not exist "installers" mkdir "installers"
-powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v24.22.2/node-v24.22.2-x64.msi' -OutFile 'installers\node-v24.22.2-x64.msi'"
-set "INSTALLER_MSI=installers\node-v24.22.2-x64.msi"
-
-:run_installer
 echo [INFO] Memulai instalasi Node.js dari !INSTALLER_MSI!...
 echo        Mohon izinkan hak administrator jika muncul prompt konfirmasi.
 echo.
-start /wait msiexec /i "%~dp0!INSTALLER_MSI!" /qb
+start /wait msiexec /i "!INSTALLER_MSI!" /qb
 echo.
 echo [OK] Proses instalasi selesai.
 
-:: Perbarui PATH di sesi saat ini setelah instalasi
-set "PATH=C:\Program Files\nodejs;%AppData%\npm;!PATH!"
-
+if exist "C:\Program Files\nodejs\node.exe" (
+    set "NODE_CMD=C:\Program Files\nodejs\node.exe"
+    goto :node_ready
+)
 where node >nul 2>nul
-if errorlevel 1 goto :node_fail
-goto :node_ready
+if not errorlevel 1 (
+    set "NODE_CMD=node"
+    goto :node_ready
+)
 
-:node_fail
+:node_not_found
 echo.
-echo [ERROR] Node.js belum berhasil dikenali. Silakan buka kembali jalankan.bat.
+echo ========================================================================
+echo [ERROR] Komponen Node.js tidak dapat dipersiapkan secara otomatis.
+echo         Pastikan file installers\node.exe atau installer MSI tersedia.
+echo ========================================================================
+echo.
 pause
 exit /b 1
 
 :node_ready
-for /f "delims=" %%v in ('node -v 2^>nul') do set "NODE_VER=%%v"
+set "NODE_VER="
+for /f "usebackq delims=" %%v in (`"!NODE_CMD!" -v 2^>nul`) do set "NODE_VER=%%v"
+if not defined NODE_VER set "NODE_VER=Aktif"
 echo   [OK] Node.js aktif     : !NODE_VER!
 echo.
 
 :: --------------------------------------------------------------------------
-:: 2. Pemeriksaan Pustaka & Mode Peluncuran
+:: 2. Pemeriksaan Berkas Aplikasi & Kesiapan Produksi
 :: --------------------------------------------------------------------------
 echo [2/3] Memeriksa kesiapan berkas aplikasi...
 
-if exist "dist\index.html" goto :has_dist
-if not exist "node_modules\vite\bin\vite.js" goto :install_deps
-goto :launch_production
+if exist "%~dp0dist\index.html" goto :app_ready
 
-:has_dist
-echo   [OK] Berkas produksi siap pakai - 100%% Offline Ready.
-goto :launch_production
+:: Jika dist belum ada, persiapkan dari arsip offline
+echo [INFO] Berkas kompilasi (dist) belum tersedia. Mempersiapkan aset...
+if not exist "%~dp0node_modules\vite\bin\vite.js" (
+    if exist "%~dp0installers\node_modules_offline.zip" (
+        echo [INFO] Mengekstrak paket pustaka offline (node_modules)...
+        tar -xf "%~dp0installers\node_modules_offline.zip" -C "%~dp0"
+    )
+)
 
-:install_deps
-echo.
-echo [INFO] Memasang dependensi aplikasi yang diperlukan: npm install...
-echo        Proses ini hanya berlangsung satu kali saat awal. Mohon tunggu...
-echo.
-cmd /c npm install
-if errorlevel 1 goto :deps_failed
-echo [INFO] Mengompilasi aplikasi: npm run build...
-cmd /c npm run build
-goto :launch_production
+if exist "%~dp0node_modules\vite\bin\vite.js" (
+    echo [INFO] Mengompilasi aplikasi web...
+    "!NODE_CMD!" "%~dp0node_modules\vite\bin\vite.js" build
+    if exist "%~dp0dist\index.html" goto :app_ready
+)
 
-:deps_failed
 echo.
-echo [ERROR] Gagal memasang dependensi. Pastikan terhubung ke internet saat awal.
+echo ========================================================================
+echo [ERROR] Berkas web (dist\index.html) tidak ditemukan.
+echo ========================================================================
+echo.
 pause
 exit /b 1
 
-:launch_production
+:app_ready
+echo   [OK] Berkas produksi siap pakai - 100%% Offline Ready.
 echo.
+
 :: --------------------------------------------------------------------------
 :: 3. Menjalankan Server Lokal & Membuka Peramban
 :: --------------------------------------------------------------------------
 echo [3/3] Menjalankan server aplikasi web lokal...
 echo.
 
-:: Bersihkan proses lama di port 5173 jika ada
+:: Bersihkan proses sisa di port 5173 jika ada
 for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":5173 " ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>nul
 
-:: Buka browser secara otomatis ke localhost:5173 dengan cache-buster agar selalu memuat versi terbaru
+:: Buka browser secara otomatis ke localhost:5173 dengan parameter anti-cache
 start "" "http://localhost:5173/?v=!RANDOM!"
 
-:: Prioritaskan server.js jika tersedia
-if exist "server.js" goto :run_server_js
-cmd /c npm run dev -- --host
-goto :server_end
+:: Jalankan server lokal mandiri
+"!NODE_CMD!" "%~dp0server.js"
 
-:run_server_js
-node server.js
-goto :server_end
-
-:server_end
+:: Ketika server dihentikan (misal pengguna tekan Ctrl+C)
 echo.
 echo ========================================================================
-echo [INFO] Menutup server aplikasi dan mematikan port 5173...
+echo [INFO] Membersihkan port dan proses server...
 for /f "tokens=5" %%a in ('netstat -aon 2^>nul ^| findstr ":5173 " ^| findstr "LISTENING"') do taskkill /F /PID %%a >nul 2>nul
-echo [OK] Aplikasi web telah berhasil dimatikan sepenuhnya.
+echo [OK] Aplikasi web telah berhasil dinonaktifkan sepenuhnya.
 echo ========================================================================
 echo.
 pause
